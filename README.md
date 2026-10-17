@@ -11,7 +11,7 @@
 
 ## 在线预览
 
-> `https://<你的用户名>.github.io/edit-life/`
+> `https://Issac0205.github.io/edit-life/`
 
 （把上面这行换成你自己的地址；部署方法见下文「三、发布到 GitHub Pages」。）
 
@@ -78,12 +78,14 @@ window.POLL_CONFIG = {
 > anon / publishable key 本来就是设计给前端公开使用的；数据库已用 RLS 限制为"只能投票、改票、读取"，不能删除。
 
 ### 第 3 步：发布到 GitHub Pages
+先在 GitHub 建一个**空仓库**（<https://github.com/new>，名字 `edit-life`，Public，**不要**勾选 README / .gitignore / license），然后：
+
 ```bash
-git remote add origin https://github.com/<你的用户名>/edit-life.git   # 换成你的仓库地址
-git push -u origin main
+git remote add origin https://github.com/Issac0205/edit-life.git   # 本机已配好，可跳过
+git push -u origin main                                          # 弹出 GitHub 登录窗口，登录一次即可
 ```
 然后仓库 **Settings → Pages** → Source 选 **Deploy from a branch** → Branch 选 `main` / `(root)` → **Save**。
-约 1 分钟后网址生效：`https://<你的用户名>.github.io/edit-life/`。
+约 1 分钟后网址生效：`https://Issac0205.github.io/edit-life/`。
 
 打开网址后，投票页左下角徽标显示 **"云端实时 · 每 2 秒同步"** 即表示成功。
 
