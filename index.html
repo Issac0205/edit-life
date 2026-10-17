@@ -1738,7 +1738,8 @@ on("finale",{enter(){hxEnd.start()},leave(){hxEnd.stop()}});
    --------------------------------------------------------------- */
 const charts={}, subs={};
 function setBadge(state,txt){ $$("[data-badge]").forEach(b=>{ b.className="badge"+(state?" "+state:""); b.querySelector("span").textContent=txt; }); }
-const okText = PollAPI.CLOUD? `云端实时 · 每 ${(PollAPI.CFG.POLL_INTERVAL/1000).toFixed(1).replace(".0","")} 秒同步` : "本地演示模式 · 点击右侧选项可加票";
+const okText = PollAPI.CLOUD? `云端实时 · 每 ${(PollAPI.CFG.POLL_INTERVAL/1000).toFixed(1).replace(".0","")} 秒同步`
+  : (/^https?:$/.test(location.protocol) ? "未配置云端 · 本地演示模式（填 index.html 顶部 POLL_CONFIG 即可联网实时投票）" : "本地演示模式 · 点击右侧选项可加票");
 setBadge(PollAPI.CLOUD?"":"local", okText);
 ["q1","q2"].forEach(q=>{
   const el=$(`[data-chart="${q}"]`);
