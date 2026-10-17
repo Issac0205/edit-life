@@ -1,0 +1,4 @@
+﻿# 统一换行符：仓库内一律 LF（避免 GitHub Pages 与本地显示差异）
+* text=auto eol=lf
+*.png binary
+*.docx binary

@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>编辑生命 · 人类从认识自然到改造自然的辩证之路</title>
+<meta name="description" content="自然辩证法课堂展示：从孟德尔到CRISPR，从转基因到基因编辑婴儿。">
+<script>
+/* ============================================================
+   ★ 投票后端配置（部署前只需改这里）★
+   1. 在 https://supabase.com 免费建一个项目，SQL Editor 中运行 supabase_setup.sql
+   2. 把 Project URL 与 anon / publishable key 填到下面
+   3. 不填 = 「本地演示模式」（同一浏览器内多标签页同步，适合彩排）
+   SESSION：换一个值即可“清零”重新开始收集（旧数据保留在数据库中）
+   ============================================================ */
+window.POLL_CONFIG = {
+  SUPABASE_URL: "",          // 例: "https://abcdefgh.supabase.co"
+  SUPABASE_KEY: "",          // 例: "eyJhbGciOi..." 或 "sb_publishable_..."
+  SESSION: "class-2026",     // 本场汇报编号，可改
+  POLL_INTERVAL: 2000,       // 大屏刷新间隔（毫秒）
+  VOTE_BASE_URL: "",         // 可留空；二维码默认指向当前网址
+  PRESENTER: "林孝义"        // 封面「汇报人」处显示的名字（只写名字，不要带"汇报人："）
+};
+</script>
+<style>
+*{box-sizing:border-box}
+:root{
+  color-scheme:dark;
+  --bg:#0B0C0A; --bg2:#121410; --panel:rgba(237,232,220,.035); --panel2:rgba(237,232,220,.06);
+  --line:rgba(237,232,220,.12); --line2:rgba(237,232,220,.24);
+  --ink:#EDE8DC; --ink2:#BEB8A9; --mute:#837E71;
+  --lime:#D7F25A; --coral:#FF6A4D; --blue:#7FA8FF; --violet:#C3A6FF;
+  --accent:var(--lime);
+  --serif:"Noto Serif SC","Source Han Serif SC","Source Han Serif CN","Songti SC","STSong","SimSun",serif;
+  --sans:"Inter","PingFang SC","HarmonyOS Sans SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SF Mono","Cascadia Code","Roboto Mono",Consolas,"Menlo",monospace;
+  --ease:cubic-bezier(.2,.75,.2,1);
+}
+html,body{margin:0;height:100%;background:#050605;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body.mode-deck{overflow:hidden}
+button{font:inherit;color:inherit}
+a{color:inherit}
+::selection{background:var(--lime);color:#000}
+.lime{color:var(--lime)}.coral{color:var(--coral)}.blue{color:var(--blue)}.violet{color:var(--violet)}.acc{color:var(--accent)}
+.mono{font-family:var(--mono)}.serif{font-family:var(--serif)}
+[hidden]{display:none!important}
+
+/* ---------------- Stage ---------------- */
+#app{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#11130f,#050605 72%)}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%) scale(var(--s,1));background:var(--bg);overflow:hidden;box-shadow:0 0 0 1px var(--line),0 40px 120px rgba(0,0,0,.6)}
+.bgfx{position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(rgba(237,232,220,.075) 1px,transparent 1.3px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse at 50% 50%,#000 25%,transparent 80%);mask-image:radial-gradient(ellipse at 50% 50%,#000 25%,transparent 80%)}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:30;opacity:.5;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.glow{position:absolute;width:1100px;height:1100px;right:-420px;top:-560px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 15%,transparent),transparent 62%);transition:background 1.2s}
+.glow.g2{left:-520px;right:auto;top:auto;bottom:-700px;opacity:.55}
+
+/* HUD */
+.hud{position:absolute;left:0;right:0;top:0;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 56px;font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;color:var(--mute);z-index:20;pointer-events:none}
+.hud .brand b{color:var(--ink);font-weight:500}
+.hud .chap{color:var(--accent);transition:color .8s}
+.hud .num b{color:var(--ink);font-weight:500}
+#progress{position:absolute;left:56px;right:56px;bottom:26px;height:3px;display:flex;gap:4px;z-index:20}
+#progress .seg{flex:1;background:var(--line);border-radius:2px;cursor:pointer;position:relative;transition:background .4s}
+#progress .seg::before{content:"";position:absolute;left:0;right:0;top:-10px;bottom:-8px}
+#progress .seg.done{background:rgba(237,232,220,.42)}
+#progress .seg.cur{background:var(--accent)}
+#progress .seg:hover::after{content:attr(data-t);position:absolute;bottom:14px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink);background:#1b1d18;border:1px solid var(--line2);padding:5px 9px;border-radius:6px}
+.keys{position:absolute;left:56px;bottom:40px;z-index:20;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:rgba(131,126,113,.75);pointer-events:none;transition:opacity .6s}
+.keys kbd{font-family:inherit;border:1px solid var(--line2);border-radius:4px;padding:1px 5px;margin-right:4px;color:var(--ink2)}
+#timer{position:absolute;right:56px;bottom:40px;z-index:20;font-family:var(--mono);font-size:13px;letter-spacing:.12em;color:var(--ink2)}
+#timer.warn{color:var(--coral)}
+
+/* Slides */
+.slide{position:absolute;inset:0;padding:112px 110px 92px;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility 0s linear .7s;z-index:1}
+.slide.active{opacity:1;visibility:visible;transition:opacity .7s ease;z-index:2}
+.a{opacity:0;transform:translateY(22px)}
+.slide.active .a{animation:rise .95s var(--ease) forwards;animation-delay:calc(var(--d,0) * 110ms + 140ms)}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 currentColor}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+
+.kicker{font-family:var(--mono);font-size:13.5px;letter-spacing:.24em;color:var(--accent);text-transform:uppercase;display:flex;gap:14px;align-items:center;transition:color .8s}
+.kicker::before{content:"";width:30px;height:1px;background:currentColor}
+.title{font-family:var(--serif);font-weight:600;font-size:56px;line-height:1.16;margin:16px 0 0;letter-spacing:.01em}
+.title em,.em{font-style:normal;color:var(--accent)}
+.lead{font-size:21px;line-height:1.75;color:var(--ink2);margin:20px 0 0}
+.small{font-size:15px;color:var(--mute);line-height:1.6}
+.src{font-family:var(--mono);font-size:11.5px;color:var(--mute);letter-spacing:.03em;line-height:1.5}
+.src::before{content:"↳ "}
+.btn{font-size:16px;color:var(--ink);background:transparent;border:1px solid var(--line2);border-radius:999px;padding:10px 20px;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#0B0C0A;border-color:var(--accent);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08);color:#0B0C0A}
+.btn:disabled{opacity:.3;pointer-events:none}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:26px 28px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2)}
+.tag.acc{border-color:color-mix(in srgb,var(--accent) 55%,transparent);color:var(--accent)}
+.hint{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--mute)}
+.hint b{color:var(--accent);font-weight:500}
+.row{display:flex;gap:12px;align-items:center}
+.bignum{font-family:var(--serif);font-weight:600;line-height:1}
+
+/* -------- Cover -------- */
+.s-cover{padding:0}
+.helix-cv{position:absolute;inset:0;width:1600px;height:900px;display:block}
+.cover-text{position:absolute;left:118px;top:140px;z-index:3;pointer-events:none}
+.cover-text h1{font-family:var(--serif);font-size:172px;line-height:1;margin:30px 0 0;font-weight:700;letter-spacing:.05em}
+.cover-text h1 span{color:var(--lime)}
+.cover-sub{font-family:var(--serif);font-size:34px;color:var(--ink2);margin:26px 0 0;letter-spacing:.08em}
+.cover-meta{margin-top:30px;font-family:var(--mono);font-size:14px;color:var(--mute);letter-spacing:.18em}
+.cover-cred{margin-top:26px;margin-left:-20px;padding:16px 22px 15px;max-width:560px;display:grid;grid-template-columns:auto 1fr;column-gap:18px;row-gap:4px;align-items:baseline;font-family:var(--mono);font-size:12.5px;line-height:1.85;letter-spacing:.08em;color:var(--mute);border-radius:16px;background:rgba(9,10,8,.97);border:1px solid rgba(237,232,220,.10);box-shadow:0 18px 60px rgba(0,0,0,.6)}
+.cover-cred i{font-style:normal;font-size:10.5px;letter-spacing:.26em;opacity:.75;white-space:nowrap}
+.cover-cred b{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);letter-spacing:.14em;line-height:1.3}
+.cover-cred span{color:var(--ink2)}
+.cover-cred em{font-style:normal;color:var(--mute);opacity:.55;padding:0 2px}
+.cover-cred .cr-tags{display:flex;flex-wrap:wrap;gap:3px 14px;margin-top:2px}
+.cover-cred .cr-tag{white-space:nowrap}
+.cover-side{position:absolute;right:118px;top:160px;text-align:right;z-index:3;pointer-events:none}
+.cover-side .hint{display:block;line-height:2}
+.edit-log{font-family:var(--mono);font-size:13px;color:var(--ink2);margin-top:14px;min-height:20px;letter-spacing:.06em}
+.edit-log b{color:var(--lime);font-weight:500}
+.cover-foot{position:absolute;left:118px;right:118px;bottom:78px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--mute);z-index:3;pointer-events:none}
+
+/* -------- Acts -------- */
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:54px}
+.act{position:relative;border:1px solid var(--line);border-radius:22px;padding:34px 34px 30px;height:470px;cursor:pointer;overflow:hidden;transition:border-color .35s,translate .45s var(--ease),background .35s;background:var(--panel)}
+.act:hover{translate:0 -8px;border-color:var(--c);background:color-mix(in srgb,var(--c) 6%,transparent)}
+.act .roman{font-family:var(--serif);font-size:120px;line-height:1;color:var(--c);opacity:.9}
+.act h3{font-family:var(--serif);font-size:46px;margin:22px 0 6px;font-weight:600}
+.act .sub{font-size:20px;color:var(--ink2)}
+.act ul{list-style:none;padding:0;margin:30px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.act li{font-size:14px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px}
+.act .go{position:absolute;right:30px;bottom:26px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--mute)}
+.act:hover .go{color:var(--c)}
+
+/* -------- Poll slide -------- */
+.s-poll .grid{display:grid;grid-template-columns:600px 1fr;gap:70px;height:100%;align-items:center}
+.s-poll .title{font-size:50px}
+.qr-wrap{display:flex;gap:26px;align-items:center;margin-top:40px}
+.qr{width:210px;height:210px;flex:none;background:var(--ink);border-radius:18px;padding:14px;display:grid;place-items:center;position:relative}
+.qr svg,.qr img{width:100%;height:100%;display:block}
+.qr .qr-fallback{color:#0B0C0A;font-size:13px;text-align:center;line-height:1.5}
+.qr-info .big{font-family:var(--serif);font-size:28px;margin-bottom:10px}
+.qr-info .url{font-family:var(--mono);font-size:12.5px;color:var(--ink2);word-break:break-all;line-height:1.55;max-width:330px}
+.badge{display:inline-flex;gap:9px;align-items:center;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;padding:6px 12px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);margin-top:16px}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--lime);color:var(--lime);animation:pulse 2s infinite}
+.badge.local i{background:var(--violet);color:var(--violet)}
+.badge.err i{background:var(--coral);color:var(--coral)}
+.poll-tools{margin-top:16px;display:flex;gap:10px}
+.poll-tools .btn{font-size:13px;padding:7px 14px}
+.recap{margin-top:30px;border-top:1px solid var(--line);padding-top:18px}
+.recap .hint{margin-bottom:10px;display:block}
+.recap-bars{display:flex;flex-direction:column;gap:8px}
+.recap-row{display:grid;grid-template-columns:110px 1fr 60px;gap:12px;align-items:center;font-size:14px;color:var(--ink2)}
+.recap-row .t{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.recap-row .t i{display:block;height:100%;width:0;background:var(--c);transition:width 1s var(--ease)}
+.recap-row .v{font-family:var(--mono);text-align:right}
+
+/* Poll chart */
+.pc{display:grid;grid-template-columns:310px 1fr;gap:54px;align-items:center}
+.pc-donut{position:relative;width:310px;height:310px}
+.pc-donut svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.pc-donut circle{fill:none;stroke-width:20}
+.pc-donut .trk{stroke:var(--line)}
+.pc-donut .sg{transition:stroke-dasharray 1.1s var(--ease),stroke-dashoffset 1.1s var(--ease),stroke-width .4s}
+.pc-donut .sg.top{stroke-width:26}
+.pc-donut .ring{stroke:var(--line);stroke-width:1;stroke-dasharray:.4 1.6}
+.pc-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.pc-total{font-family:var(--serif);font-size:92px;line-height:1;font-weight:600}
+.pc-total.bump{animation:bump .6s var(--ease)}
+@keyframes bump{30%{transform:scale(1.12);color:var(--accent)}}
+.pc-center span{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--mute);margin-top:10px}
+.pc-bars{display:flex;flex-direction:column;gap:22px}
+.pc-row{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:end}
+.pc-row .lab{font-size:21px;line-height:1.3;transition:color .4s}
+.pc-row .lab small{display:block;font-size:13px;color:var(--mute);margin-top:3px}
+.pc-row .val{font-family:var(--mono);font-size:30px;text-align:right;white-space:nowrap}
+.pc-row .val small{font-size:13px;color:var(--mute);margin-left:6px}
+.pc-row .trk{grid-column:1/-1;height:12px;border-radius:6px;background:var(--line);overflow:hidden;position:relative}
+.pc-row .fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:6px;background:var(--c);transition:width 1.1s var(--ease)}
+.pc-row .fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-100%);animation:shine 2.6s infinite}
+@keyframes shine{60%,100%{transform:translateX(100%)}}
+.pc-row.top .lab{color:var(--c)}
+.pc.clickable .pc-row{cursor:pointer}
+.pc.clickable .pc-row:hover .trk{box-shadow:0 0 0 1px var(--c)}
+.pc-err{font-family:var(--mono);font-size:12px;color:var(--coral);margin-top:14px;min-height:16px}
+
+/* -------- Timeline -------- */
+.tl{position:relative;margin-top:56px;height:150px}
+.tl-line{position:absolute;left:40px;right:40px;top:46px;height:1px;background:var(--line2)}
+.tl-line i{position:absolute;top:-1px;height:3px;border-radius:2px}
+.tl-node{position:absolute;top:0;width:112px;transform:translateX(-50%);text-align:center;cursor:pointer}
+.tl-node .yr{font-family:var(--mono);font-size:14px;color:var(--mute);height:26px;transition:color .3s}
+.tl-node .dot{width:15px;height:15px;border-radius:50%;background:var(--bg);border:2px solid var(--k);margin:6px auto 0;transition:all .35s var(--ease)}
+.tl-node .nm{font-size:13.5px;color:var(--ink2);margin-top:14px;line-height:1.4;transition:color .3s}
+.tl-node:hover .dot{transform:scale(1.25)}
+.tl-node.on .dot{background:var(--k);box-shadow:0 0 0 9px color-mix(in srgb,var(--k) 20%,transparent);transform:scale(1.3)}
+.tl-node.on .yr,.tl-node.on .nm{color:var(--ink)}
+.tl-legend{position:absolute;right:0;top:-46px;display:flex;gap:20px}
+.tl-legend span{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink2)}
+.tl-legend i{width:10px;height:10px;border-radius:50%}
+.tl-detail{display:grid;grid-template-columns:330px 1fr;gap:56px;margin-top:34px;border-top:1px solid var(--line);padding-top:38px}
+.tl-detail .big{font-family:var(--serif);font-size:130px;line-height:.9;font-weight:600;color:var(--k)}
+.tl-detail .kind{margin-top:18px}
+.tl-detail h3{font-family:var(--serif);font-size:36px;margin:0 0 16px;font-weight:600}
+.tl-detail p{font-size:20px;line-height:1.85;color:var(--ink2);margin:0 0 14px}
+.tl-detail.swap>*{animation:fadein .6s ease}
+
+/* -------- Morgan -------- */
+.s-morgan .grid{display:grid;grid-template-columns:590px 1fr;gap:56px;margin-top:6px}
+.facts{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-direction:column;gap:16px}
+.facts li{display:grid;grid-template-columns:62px 1fr;gap:14px;font-size:18px;line-height:1.7;color:var(--ink2)}
+.facts li b{font-family:var(--mono);font-weight:500;color:var(--accent);font-size:15px;padding-top:3px}
+.facts li strong{color:var(--ink);font-weight:600}
+.pull{margin-top:26px;font-family:var(--serif);font-size:24px;line-height:1.6;color:var(--ink);border-left:2px solid var(--accent);padding-left:20px}
+.sim{display:flex;flex-direction:column;height:672px;padding:24px 26px}
+.sim-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.sim-gen{font-family:var(--serif);font-size:30px}
+.sim-gen small{display:block;font-family:var(--mono);font-size:13px;color:var(--mute);letter-spacing:.06em;margin-top:6px}
+.sim-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.sim-btns .btn{font-size:14px;padding:8px 15px}
+.sim-field{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;min-height:0}
+.sim-sex{border:1px dashed var(--line2);border-radius:14px;padding:12px 12px 10px;position:relative;overflow:hidden}
+.sim-sex h4{margin:0 0 10px;font-weight:500;font-size:14px;color:var(--ink2);display:flex;justify-content:space-between}
+.sim-sex h4 span{font-family:var(--mono);color:var(--mute)}
+.flies{display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start}
+.fly{width:24px;height:24px;animation:pop .45s var(--ease) backwards}
+.fly.big{width:96px;height:96px}
+@keyframes pop{from{opacity:0;transform:scale(.3)}}
+.sim-table{margin-top:16px;width:100%;border-collapse:collapse;font-size:14px}
+.sim-table th,.sim-table td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line)}
+.sim-table th:first-child,.sim-table td:first-child{text-align:left;color:var(--ink2)}
+.sim-table th{font-weight:500;color:var(--mute);font-size:13px}
+.sim-table td{font-family:var(--mono);font-size:15px}
+.sim-table tr.real td{color:var(--accent)}
+.eye{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:0}
+
+/* -------- CRISPR -------- */
+.s-crispr .grid{display:grid;grid-template-columns:500px 1fr;gap:50px}
+.s-crispr .title{font-size:46px}
+.steps{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-direction:column;gap:6px}
+.steps li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;padding:7px 14px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:all .3s;color:var(--ink2);font-size:16px}
+.steps li b{font-family:var(--mono);font-size:13px;width:28px;height:28px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-weight:500}
+.steps li.on{border-color:color-mix(in srgb,var(--accent) 50%,transparent);background:color-mix(in srgb,var(--accent) 7%,transparent);color:var(--ink)}
+.steps li.on b{background:var(--accent);color:#0B0C0A;border-color:var(--accent)}
+.mini-facts{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.mini-facts div{font-size:14.5px;line-height:1.6;color:var(--ink2);display:grid;grid-template-columns:52px 1fr;gap:10px}
+.mini-facts b{font-family:var(--mono);color:var(--accent);font-weight:500;font-size:13px;padding-top:2px}
+.cr-stage{padding:18px 20px 22px;height:672px;display:flex;flex-direction:column}
+.cr-svg{width:100%;height:auto;flex:1}
+.cr-cap{border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.cr-cap p{margin:0;font-size:19px;line-height:1.7;color:var(--ink)}
+.cr-cap p b{color:var(--accent);font-weight:600;margin-right:8px}
+/* svg internals */
+.cr text{font-family:var(--mono);font-size:15px;text-anchor:middle;dominant-baseline:central;fill:var(--ink)}
+.cr .lbl{font-size:12px;fill:var(--mute);letter-spacing:.1em}
+.cr .base rect{fill:rgba(237,232,220,.06);stroke:rgba(237,232,220,.18);transition:all .6s}
+.cr .base.A text{fill:var(--lime)}.cr .base.T text{fill:var(--coral)}.cr .base.C text{fill:var(--blue)}.cr .base.G text{fill:var(--violet)}
+.cr .bb{stroke:rgba(237,232,220,.35);stroke-width:2}
+.cr .dl,.cr .dr{transition:transform .9s var(--ease)}
+.cr .cas{transition:transform 1.6s var(--ease),opacity .8s;transform:translateX(-520px);opacity:0}
+.cr .cas .body{fill:color-mix(in srgb,var(--lime) 8%,transparent);stroke:var(--lime);stroke-width:1.5;stroke-dasharray:4 5}
+.cr .grna rect{fill:color-mix(in srgb,var(--lime) 18%,transparent);stroke:none;transition:fill .5s}
+.cr .grna text{fill:var(--lime);font-size:13px}
+.cr .tail{fill:none;stroke:var(--lime);stroke-width:2;opacity:.7}
+.cr .pairs line{stroke:var(--lime);stroke-width:1.5;stroke-dasharray:2 3;opacity:0;transition:opacity .6s}
+.cr .pam rect{transition:all .6s}
+.cr .pambr{opacity:0;transition:opacity .6s}
+.cr .arr{opacity:0;transition:opacity .8s,transform .8s}
+.cr .virus{transition:opacity .6s,transform 1s var(--ease)}
+.cr .nsp{transition:transform 1.2s var(--ease),opacity .8s;transform:translate(300px,-10px);opacity:0}
+.cr .cut{opacity:0;transition:opacity .4s}
+.cr .new{opacity:0;transition:opacity .6s .5s}
+.cr .old{transition:opacity .4s}
+.cr .ko{opacity:0;transition:opacity .6s .6s}
+.cr.ge1 .nsp{transform:none;opacity:1}
+.cr.ge1 .virus{opacity:.35}
+.cr.ge2 .cas{transform:translateX(0);opacity:1}
+.cr.ge2 .pam rect{stroke:var(--violet);fill:color-mix(in srgb,var(--violet) 18%,transparent)}
+.cr.ge2 .pambr{opacity:1}
+.cr.ge3 .pairs line{opacity:.9}
+.cr.ge3 .tgt rect{stroke:var(--lime);fill:color-mix(in srgb,var(--lime) 14%,transparent)}
+.cr.ge3 .grna rect{fill:color-mix(in srgb,var(--lime) 30%,transparent)}
+.cr.ge4 .dl{transform:translateX(-22px)}
+.cr.ge4 .dr{transform:translateX(22px)}
+.cr.ge4 .cut{opacity:1}
+.cr.ge5 .cas{opacity:0;transform:translateY(-60px)}
+.cr.ge5 .dl,.cr.ge5 .dr{transform:none}
+.cr.ge5 .cut{opacity:0}
+.cr.ge5 .old{opacity:0}
+.cr.ge5 .new{opacity:1}
+.cr.ge5 .ed rect{stroke:var(--lime);fill:color-mix(in srgb,var(--lime) 30%,transparent);transition-delay:.4s}
+.cr.ge5 .ko{opacity:1}
+.cr.ge5 .pairs line{opacity:0}
+.cr.scan .cas{transition:none}
+
+/* -------- Credit -------- */
+.toggle{display:inline-flex;border:1px solid var(--line2);border-radius:999px;padding:4px;margin-top:26px;position:relative}
+.toggle button{border:0;background:transparent;padding:10px 24px;border-radius:999px;cursor:pointer;font-size:16px;color:var(--ink2);position:relative;z-index:1;transition:color .3s}
+.toggle button.on{color:#0B0C0A;font-weight:600}
+.toggle .knob{position:absolute;top:4px;bottom:4px;border-radius:999px;background:var(--accent);transition:left .45s var(--ease),width .45s var(--ease)}
+.cv{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:24px}
+.cv-p{border:1px solid var(--line);border-radius:20px;padding:24px 28px;transition:all .5s var(--ease);opacity:.32;filter:saturate(.3)}
+.cv-p.on{opacity:1;filter:none;border-color:color-mix(in srgb,var(--accent) 60%,transparent);background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.cv-p .q{font-family:var(--mono);font-size:12.5px;letter-spacing:.12em;color:var(--accent)}
+.cv-p h3{font-family:var(--serif);font-size:26px;margin:10px 0 10px;font-weight:600;line-height:1.35}
+.cv-p p{font-size:15.5px;line-height:1.65;color:var(--ink2);margin:0}
+.cv-p .tag{margin-top:12px}
+.ptl{margin-top:22px;position:relative;height:82px}
+.ptl::before{content:"";position:absolute;left:0;right:0;top:5px;height:1px;background:var(--line2)}
+.ptl .e{position:absolute;top:0;width:118px;transform:translateX(-50%);text-align:center;font-size:12.5px;color:var(--ink2);line-height:1.4}
+.ptl .e i{display:block;width:11px;height:11px;border-radius:50%;margin:0 auto 6px;border:2px solid var(--c);background:var(--bg)}
+.ptl .e b{display:block;font-family:var(--mono);font-size:11.5px;color:var(--mute);font-weight:400;margin-bottom:6px}
+.ptl .e.hl i{background:var(--c)}
+.ptl-leg{display:flex;gap:18px;font-size:13px;color:var(--mute);margin-top:6px}
+.ptl-leg span{display:flex;gap:6px;align-items:center}
+.ptl-leg i{width:9px;height:9px;border-radius:50%}
+.third{position:absolute;right:110px;top:122px;width:450px;padding:18px 22px;border-radius:16px;border:1px dashed var(--line2);font-size:14.5px;line-height:1.7;color:var(--ink2)}
+.third b{color:var(--ink);font-weight:600}
+
+/* -------- Episteme -------- */
+.s-episteme .grid{display:grid;grid-template-columns:640px 1fr;gap:40px}
+.spiral{width:640px;height:680px;margin-top:-20px}
+.spiral path.sp{fill:none;stroke:var(--accent);stroke-width:1.6;opacity:.75}
+.spiral .pt circle{transition:all .3s}
+.spiral .pt text{font-size:14px;fill:var(--ink2);font-family:var(--sans);paint-order:stroke;stroke:var(--bg);stroke-width:6px;stroke-linejoin:round}
+.spiral .pt text.k{font-family:var(--mono);font-size:11px;letter-spacing:.14em}
+.spiral .pt.prac circle.c{fill:var(--lime)}
+.spiral .pt.know circle.c{fill:var(--blue)}
+.spiral .pt circle.h{fill:none;stroke:currentColor;opacity:.35}
+.spiral .pt.prac{color:var(--lime)}.spiral .pt.know{color:var(--blue)}
+.spiral .pt{opacity:0}
+.spiral path.sp{stroke-dashoffset:var(--len,0)}
+.spiral.drawn path.sp{animation:spdraw 2.8s cubic-bezier(.4,.1,.2,1) forwards}
+.spiral.drawn .pt{animation:fadein .7s ease forwards}
+@keyframes spdraw{from{stroke-dashoffset:var(--len,0)}to{stroke-dashoffset:0}}
+.spiral .ctr{font-family:var(--serif);font-size:18px;fill:var(--ink);text-anchor:middle}
+.prin{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.prin .card{padding:14px 20px;display:grid;grid-template-columns:44px 1fr;gap:14px}
+.prin .n{font-family:var(--serif);font-size:32px;line-height:1;color:var(--accent)}
+.prin h4{margin:0 0 4px;font-size:18px;font-weight:600}
+.prin p{margin:0;font-size:14.5px;line-height:1.7;color:var(--ink2)}
+.quote{font-family:var(--serif);font-size:17px;line-height:1.7;color:var(--ink);margin-top:16px;padding:14px 20px;border-radius:14px;background:var(--panel2)}
+.quote cite{display:block;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:6px;letter-spacing:.06em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chips span{font-size:13.5px;border:1px solid var(--line2);border-radius:999px;padding:5px 12px;color:var(--ink2)}
+
+/* -------- Myths -------- */
+.myths{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:40px;height:540px}
+.flip{perspective:1600px;cursor:pointer}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .9s var(--ease);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;padding:30px 28px;display:flex;flex-direction:column;border:1px solid var(--line)}
+.face.front{background:var(--panel)}
+.flip:hover .face.front{border-color:var(--line2)}
+.face.front .qm{font-family:var(--serif);font-size:110px;line-height:.8;color:var(--mute);opacity:.5}
+.face.front .no{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--mute);margin-top:18px}
+.face.front .my{font-family:var(--serif);font-size:29px;line-height:1.5;margin-top:14px;font-weight:600}
+.face.front .tap{margin-top:auto;font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.14em}
+.face.back{transform:rotateY(180deg);background:color-mix(in srgb,var(--accent) 7%,var(--bg));border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.face.back .verdict{font-family:var(--serif);font-size:30px;color:var(--accent);font-weight:600}
+.face.back p{font-size:16px;line-height:1.8;color:var(--ink);margin:14px 0 0}
+.face.back p b{color:var(--accent)}
+.face.back .src{margin-top:auto}
+.myth-count{position:absolute;right:110px;top:130px}
+
+/* -------- Spectrum -------- */
+.spec-track{position:relative;margin-top:50px;height:84px}
+.spec-track .rail{position:absolute;left:0;right:0;top:20px;height:4px;border-radius:2px;background:linear-gradient(90deg,rgba(237,232,220,.18),var(--accent))}
+.spec-stop{position:absolute;top:0;transform:translateX(-50%);text-align:center;cursor:pointer;width:200px}
+.spec-stop i{display:block;width:22px;height:22px;margin:11px auto 0;border-radius:50%;background:var(--bg);border:2px solid var(--ink2);transition:all .35s var(--ease)}
+.spec-stop span{display:block;margin-top:12px;font-size:17px;color:var(--ink2);transition:color .3s}
+.spec-stop.on i{background:var(--accent);border-color:var(--accent);transform:scale(1.35);box-shadow:0 0 0 10px color-mix(in srgb,var(--accent) 18%,transparent)}
+.spec-stop.on span{color:var(--ink);font-weight:600}
+.genome{margin-top:34px;padding:22px 26px 18px}
+.genome .bar{display:flex;gap:4px;height:58px;align-items:flex-end}
+.genome .bar i{flex:1;height:30px;border-radius:2px;background:rgba(237,232,220,.14);transition:background .5s,height .5s var(--ease)}
+.genome .bar i.m{background:var(--c);height:58px}
+.genome .bar i.p2{background:color-mix(in srgb,var(--violet) 55%,transparent);height:30px}
+.genome .bar i.p1{background:color-mix(in srgb,var(--blue) 55%,transparent);height:30px}
+.genome .gl{display:flex;justify-content:space-between;margin-top:10px}
+.spec-info{display:grid;grid-template-columns:330px 1fr 1fr 1fr;gap:28px;margin-top:26px}
+.spec-info .nm{font-family:var(--serif);font-size:44px;font-weight:600;line-height:1.1}
+.spec-info .era{font-family:var(--mono);font-size:13px;color:var(--mute);margin-top:10px;letter-spacing:.06em}
+.spec-info .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--mute);margin-bottom:8px}
+.spec-info .v{font-size:17px;line-height:1.7;color:var(--ink)}
+.spec-info .swap{animation:fadein .5s ease}
+.paradox{margin-top:26px;font-size:16px;line-height:1.7;color:var(--ink2);padding:14px 20px;border-left:2px solid var(--accent);background:var(--panel)}
+.paradox b{color:var(--ink)}
+
+/* -------- Golden rice -------- */
+.s-golden .grid{display:grid;grid-template-columns:430px 1fr;gap:60px;margin-top:20px}
+.stat{padding:18px 0;border-bottom:1px solid var(--line)}
+.stat .bignum{font-size:66px;color:#F2C94C}
+.stat .bignum small{font-size:26px;margin-left:4px}
+.stat p{margin:8px 0 0;font-size:15.5px;line-height:1.65;color:var(--ink2)}
+.gr-tl{position:relative;height:440px;margin-top:6px}
+.gr-axis{position:absolute;left:0;right:0;top:220px;height:1px;background:var(--line2)}
+.gr-axis span{position:absolute;top:10px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:var(--mute)}
+.gr-e{position:absolute;width:150px;font-size:13.5px;line-height:1.45;color:var(--ink2)}
+.gr-e b{display:block;font-family:var(--mono);font-size:12px;font-weight:500;margin-bottom:3px}
+.gr-e::before{content:"";position:absolute;left:0;width:1px;background:var(--c)}
+.gr-e::after{content:"";position:absolute;left:-4px;width:9px;height:9px;border-radius:50%;background:var(--c)}
+.gr-e.up{bottom:220px;padding:0 0 0 10px}
+.gr-e.up::before{top:0;bottom:calc(var(--h) * -1)}
+.gr-e.up::after{bottom:calc(var(--h) * -1 - 4px)}
+.gr-e.up{margin-bottom:var(--h)}
+.gr-e.dn{top:220px;padding:0 0 0 10px;margin-top:var(--h)}
+.gr-e.dn::before{bottom:0;top:calc(var(--h) * -1)}
+.gr-e.dn::after{top:calc(var(--h) * -1 - 4px)}
+.gr-e b{color:var(--c)}
+.gr-e.r{transform:translateX(-100%);padding:0 10px 0 0;text-align:right}
+.gr-e.r::before{left:auto;right:0}.gr-e.r::after{left:auto;right:-4px}
+.gr-lab{position:absolute;left:0;font-family:var(--mono);font-size:12px;letter-spacing:.16em}
+.takeaway{margin-top:10px;font-family:var(--serif);font-size:24px;line-height:1.6;padding:18px 24px;border-radius:16px;background:var(--panel2)}
+.takeaway b{color:var(--accent)}
+
+/* -------- Gap -------- */
+.s-gap .grid{display:grid;grid-template-columns:560px 1fr;gap:70px;margin-top:34px}
+.pew{display:flex;gap:56px;align-items:flex-end;height:430px;padding:0 20px;border-bottom:1px solid var(--line2);position:relative}
+.pew .col{width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.pew .bar{width:100%;border-radius:12px 12px 0 0;height:0;transition:height 1.4s var(--ease)}
+.pew .pct{font-family:var(--serif);font-size:60px;font-weight:600;margin-bottom:10px}
+.pew .who{position:absolute;bottom:-38px;font-size:15px;color:var(--ink2);width:150px;text-align:center}
+.pew .col{position:relative}
+.gapmark{position:absolute;border:1px dashed var(--coral);border-left:0;border-radius:0 8px 8px 0;opacity:0;transition:opacity .6s 1.2s}
+.gapmark span{position:absolute;left:calc(100% + 14px);top:50%;transform:translateY(-50%);font-family:var(--serif);font-size:20px;color:var(--coral);line-height:1.3;white-space:nowrap}
+.go .gapmark{opacity:1}
+.sumner .row3{display:flex;flex-direction:column;gap:22px;margin-top:26px}
+.sm-r .lab{display:flex;justify-content:space-between;font-size:18px;margin-bottom:8px}
+.sm-r .lab span{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.sm-r .t{height:34px;border-radius:8px;background:var(--line);position:relative;overflow:hidden}
+.sm-r .t i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:8px;background:var(--accent);transition:width 1s var(--ease),background .5s}
+.sm-r .t b{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:18px;font-weight:500}
+.sumner.ex .sm-r .t i{background:var(--coral)}
+.sm-note{margin-top:22px;font-size:15px;line-height:1.7;color:var(--ink2)}
+
+/* -------- Distortion -------- */
+.chain{display:flex;align-items:center;gap:0;margin-top:34px}
+.ch-n{flex:1;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:center;font-size:16px;color:var(--mute);transition:all .5s;cursor:pointer;background:var(--panel)}
+.ch-n small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;margin-bottom:4px}
+.ch-n.on{color:var(--ink);border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.ch-n.cur{box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent)}
+.ch-a{width:36px;text-align:center;color:var(--mute);font-family:var(--mono)}
+.ch-say{margin-top:20px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:20px 26px;border-radius:16px;border:1px solid var(--line);min-height:104px}
+.ch-say .s{font-family:var(--serif);font-size:30px;line-height:1.4}
+.ch-say .s.swap{animation:fadein .5s}
+.ch-say .s small{display:block;font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:6px}
+.dist-grid{display:grid;grid-template-columns:1fr 430px;gap:26px;margin-top:22px}
+.mech{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mech .card{padding:16px 20px}
+.mech h4{margin:0 0 6px;font-size:18px;display:flex;gap:10px;align-items:baseline}
+.mech h4 span{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.mech p{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink2)}
+.princ{border-radius:18px;padding:20px 24px;background:color-mix(in srgb,var(--accent) 8%,transparent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.princ .k{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--accent)}
+.princ ol{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px;counter-reset:p}
+.princ li{counter-increment:p;display:grid;grid-template-columns:28px 1fr;font-size:15px;line-height:1.6;color:var(--ink2)}
+.princ li::before{content:counter(p);font-family:var(--serif);font-size:20px;color:var(--accent)}
+.princ li b{color:var(--ink)}
+
+/* -------- Case slides (III) -------- */
+.case .grid{display:grid;grid-template-columns:560px 1fr;gap:56px;margin-top:8px}
+.case .date{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:.12em;margin-top:22px}
+.vlist{list-style:none;padding:0;margin:22px 0 0;position:relative}
+.vlist::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:var(--line2)}
+.vlist li{position:relative;padding-left:30px;margin-bottom:15px;font-size:16px;line-height:1.6;color:var(--ink2)}
+.vlist li::before{content:"";position:absolute;left:1px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.vlist li b{display:block;font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--ink);letter-spacing:.04em}
+.vlist li.now::before{background:var(--accent);animation:pulse 2s infinite;color:var(--accent)}
+.cross{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px}
+.cross .card{padding:22px 24px;position:relative}
+.cross .card .n{font-family:var(--serif);font-size:44px;line-height:1;color:var(--accent);opacity:.9}
+.cross h4{margin:10px 0 8px;font-size:21px;font-weight:600}
+.cross p{margin:0;font-size:15px;line-height:1.7;color:var(--ink2)}
+.qfacts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:36px}
+.qfacts .card{padding:16px 20px}
+.qfacts .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--accent)}
+.qfacts p{margin:6px 0 0;font-size:15px;line-height:1.65;color:var(--ink)}
+.known{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.known>div{border-radius:16px;padding:16px 20px;font-size:14.5px;line-height:1.7;color:var(--ink2)}
+.known .y{background:var(--panel2)}
+.known .n{border:1px dashed var(--line2)}
+.known h5{margin:0 0 6px;font-size:13px;font-family:var(--mono);letter-spacing:.14em;font-weight:500;color:var(--ink)}
+.memo{font-size:13px;color:var(--mute);margin-top:14px;line-height:1.6}
+
+/* success */
+.succ{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.succ .card{padding:28px 28px 24px;display:flex;flex-direction:column;height:540px;position:relative;overflow:hidden}
+.succ .card::after{content:"";position:absolute;right:-80px;top:-80px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 22%,transparent),transparent 70%)}
+.succ .yr{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;color:var(--accent)}
+.succ h3{font-family:var(--serif);font-size:32px;margin:12px 0 4px;font-weight:600}
+.succ .who{font-size:15px;color:var(--mute)}
+.succ dl{margin:20px 0 0;display:grid;grid-template-columns:62px 1fr;gap:10px 12px;font-size:15px;line-height:1.6}
+.succ dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--mute);padding-top:3px}
+.succ dd{margin:0;color:var(--ink2)}
+.succ .out{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);font-family:var(--serif);font-size:20px;line-height:1.5}
+.succ .src{margin-top:10px}
+
+/* compare matrix */
+.mx{width:100%;border-collapse:separate;border-spacing:0;margin-top:34px;table-layout:fixed}
+.mx thead th:first-child{width:230px}
+.mx th,.mx td{padding:0;text-align:center}
+.mx thead th{padding:0 6px 14px;vertical-align:bottom}
+.mx thead button{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 8px;width:100%;cursor:pointer;font-size:15px;color:var(--ink2);transition:all .3s}
+.mx thead button:hover{border-color:var(--line2);color:var(--ink)}
+.mx thead th.on button{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.mx tbody th{text-align:left;padding:12px 18px 12px 0;width:230px;font-weight:500;border-top:1px solid var(--line)}
+.mx tbody th b{display:block;font-size:19px;font-weight:600}
+.mx tbody th span{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.mx tbody td{border-top:1px solid var(--line);padding:8px 6px;transition:background .3s;cursor:pointer}
+.mx td.on{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.sym{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;font-size:17px;font-weight:700;font-family:var(--mono)}
+.sym.y{background:color-mix(in srgb,var(--lime) 16%,transparent);color:var(--lime)}
+.sym.n{background:color-mix(in srgb,var(--coral) 18%,transparent);color:var(--coral)}
+.sym.q{background:color-mix(in srgb,#F2C94C 16%,transparent);color:#F2C94C}
+.mx td .nt{display:block;font-size:12px;color:var(--mute);line-height:1.35;margin-top:5px;min-height:32px;opacity:.0;transition:opacity .3s}
+.mx td.on .nt{opacity:1;color:var(--ink2)}
+.mx tr.bad th b{color:var(--coral)}
+.mx tr.good th b{color:var(--lime)}
+.mx-cap{margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:30px}
+.mx-cap .q{font-family:var(--serif);font-size:22px}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--mute);align-items:center;white-space:nowrap}
+.legend .sym{width:24px;height:24px;font-size:12px}
+
+/* boundary */
+.s-boundary .grid{display:grid;grid-template-columns:720px 1fr;gap:50px;margin-top:20px}
+.bmap{position:relative;width:720px;height:560px;padding:0 0 40px 46px}
+.bq{position:absolute;width:calc((100% - 46px)/2 - 6px);height:calc((100% - 40px)/2 - 6px);border-radius:18px;border:1px solid var(--line);cursor:pointer;transition:all .35s;padding:16px 18px;background:var(--panel)}
+.bq:hover{border-color:var(--line2)}
+.bq.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 9%,transparent)}
+.bq .bt{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--c)}
+.bq .bs{font-family:var(--serif);font-size:24px;margin-top:6px;font-weight:600}
+.bq.q1{left:46px;bottom:40px}.bq.q2{right:0;bottom:40px}.bq.q3{left:46px;top:0}.bq.q4{right:0;top:0}
+.bdot{position:absolute;display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink);white-space:nowrap;pointer-events:none}
+.bdot i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 22%,transparent)}
+.bdot.ring i{background:transparent;border:2px solid var(--c)}
+.bax{position:absolute;font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.08em}
+.bax.x{left:46px;right:0;bottom:6px;display:flex;justify-content:space-between}
+.bax.y{left:0;top:0;bottom:40px;width:30px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;writing-mode:vertical-rl;transform:rotate(180deg)}
+.bpanel .status{font-family:var(--serif);font-size:40px;font-weight:600;color:var(--c);line-height:1.2}
+.bpanel .ttl{font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;color:var(--mute)}
+.bpanel p{font-size:17px;line-height:1.8;color:var(--ink2);margin:16px 0 0}
+.bpanel .law{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.bpanel .law div{border-left:2px solid var(--c);padding:6px 0 6px 14px;font-size:15px;line-height:1.65;color:var(--ink)}
+.bpanel .law div small{display:block;font-family:var(--mono);font-size:11.5px;color:var(--mute);margin-top:2px}
+.bpanel.swap>*{animation:fadein .5s}
+
+/* dialectic */
+.s-dialectic .grid{display:grid;grid-template-columns:1fr 640px 1fr;gap:36px;margin-top:30px;align-items:start}
+.qcard{font-family:var(--serif);font-size:20px;line-height:1.8;color:var(--ink);padding:24px 24px;border-radius:18px;background:var(--panel2);border:1px solid var(--line)}
+.qcard cite{display:block;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:12px;letter-spacing:.04em;line-height:1.5}
+.qcard .mk{font-size:60px;line-height:.6;color:var(--accent);display:block;height:30px}
+.scale{width:640px;height:330px}
+.scale .beam{transition:transform .5s var(--ease);transform-origin:320px 120px}
+.scale .pan{transition:transform .5s var(--ease)}
+.scale text{font-family:var(--serif);font-size:18px;letter-spacing:.06em;fill:var(--ink);text-anchor:middle}
+.dial{margin-top:6px}
+.dial input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--lime) 50%,var(--coral));outline:none;cursor:pointer}
+.dial input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--ink);border:5px solid var(--bg);box-shadow:0 0 0 2px var(--ink)}
+.dial input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--ink);border:5px solid var(--bg)}
+.dial .ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--mute);margin-top:12px;letter-spacing:.12em}
+.dout{margin-top:22px;padding:20px 24px;border-radius:18px;border:1px solid var(--c);background:color-mix(in srgb,var(--c) 8%,transparent);transition:border-color .4s,background .4s;min-height:150px}
+.dout .z{font-family:var(--serif);font-size:32px;font-weight:600;color:var(--c);transition:color .4s}
+.dout p{margin:8px 0 0;font-size:16.5px;line-height:1.75;color:var(--ink)}
+
+/* finale */
+.s-finale{padding:0}
+.s-finale .helix-cv{opacity:.35}
+.fin{position:absolute;left:118px;top:150px;right:118px;z-index:3}
+.fin .ln{font-family:var(--serif);font-size:80px;line-height:1.3;font-weight:600}
+.fin .ln.dim{color:var(--ink2)}
+.fin .ln em{font-style:normal;color:var(--violet)}
+.fin3{position:absolute;left:118px;right:118px;bottom:110px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;z-index:3}
+.fin3 div{border-top:1px solid var(--line2);padding-top:16px}
+.fin3 b{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--c);font-weight:500}
+.fin3 p{margin:8px 0 0;font-family:var(--serif);font-size:24px;line-height:1.5}
+.thanks{position:absolute;right:118px;top:150px;text-align:right;z-index:3}
+.thanks .t{font-family:var(--serif);font-size:44px}
+.thanks .hint{margin-top:8px;display:block}
+
+/* refs */
+.refs{margin-top:26px;height:620px;overflow:auto;padding-right:14px;font-size:13px;line-height:1.6;color:var(--ink2)}
+.refs-in{columns:3;column-gap:40px}
+.refs::-webkit-scrollbar{width:6px}.refs::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+.refs h4{break-after:avoid;font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--accent);margin:0 0 10px;font-weight:500}
+.refs ol{margin:0 0 22px;padding-left:24px}
+.refs li{margin-bottom:8px;break-inside:avoid}
+.refs a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line2);word-break:break-all}
+.refs a:hover{color:var(--accent);border-color:var(--accent)}
+.refs-note{position:absolute;right:110px;top:132px;max-width:520px;text-align:right;font-size:13.5px;color:var(--mute);line-height:1.6}
+
+/* ---------------- Drawers ---------------- */
+#notes{position:fixed;left:0;right:0;bottom:0;z-index:100;height:38vh;min-height:240px;background:rgba(11,12,10,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line2);transform:translateY(102%);transition:transform .45s var(--ease);display:grid;grid-template-columns:1fr 280px;gap:30px;padding:22px 40px 22px}
+#notes.open{transform:none}
+#notes .nh{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--mute);display:flex;gap:18px;align-items:center}
+#notes .nh b{color:var(--accent);font-weight:500}
+#notes .nt{font-size:var(--nfs,22px);line-height:1.75;color:var(--ink);margin-top:12px;overflow:auto;max-height:calc(38vh - 80px)}
+#notes .nt .ex{display:block;margin-top:12px;font-size:.78em;color:var(--ink2);border-left:2px solid var(--line2);padding-left:12px}
+#notes .side{border-left:1px solid var(--line);padding-left:26px;font-size:14px;color:var(--ink2);display:flex;flex-direction:column;gap:14px}
+#notes .side .k{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--mute)}
+#notes .side .v{font-size:16px;color:var(--ink);margin-top:4px}
+#notes .side .btn{font-size:12px;padding:5px 10px}
+#overview{position:fixed;inset:0;z-index:110;background:rgba(5,6,5,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:50px 60px;overflow:auto;opacity:0;pointer-events:none;transition:opacity .35s}
+#overview.open{opacity:1;pointer-events:auto}
+#overview h2{font-family:var(--serif);font-weight:600;margin:0 0 26px;font-size:30px}
+#overview .ov{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+#overview .ov button{text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .25s;min-height:110px}
+#overview .ov button:hover{border-color:var(--c)}
+#overview .ov button.cur{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+#overview .ov small{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--c)}
+#overview .ov div{font-family:var(--serif);font-size:19px;margin-top:8px;line-height:1.4;color:var(--ink)}
+
+/* ---------------- Vote mode (mobile) ---------------- */
+body.mode-vote,body.mode-script{overflow:auto}
+#voteApp{min-height:100vh;background:var(--bg);position:relative;overflow:hidden}
+#voteApp .glow{position:fixed}
+.vwrap{position:relative;z-index:2;max-width:560px;margin:0 auto;padding:28px 22px 50px}
+.vbrand{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:var(--mute);display:flex;justify-content:space-between}
+.vbrand b{color:var(--ink);font-weight:500}
+.vq{font-family:var(--serif);font-size:30px;line-height:1.4;font-weight:600;margin:34px 0 0}
+.vhint{font-size:14.5px;color:var(--mute);margin-top:12px;line-height:1.6}
+.vopts{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+.vopt{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;text-align:left;width:100%;padding:18px 18px;border-radius:18px;border:1px solid var(--line2);background:var(--panel);cursor:pointer;transition:all .25s;-webkit-tap-highlight-color:transparent}
+.vopt .l{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:14px;border:1px solid var(--line2);color:var(--ink2)}
+.vopt .t{font-size:19px;color:var(--ink)}
+.vopt .t small{display:block;font-size:13px;color:var(--mute);margin-top:3px}
+.vopt .ck{opacity:0;color:var(--c);font-size:20px;transition:opacity .3s}
+.vopt:active{transform:scale(.98)}
+.vopt.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.vopt.sel .l{background:var(--c);color:#0B0C0A;border-color:var(--c)}
+.vopt.sel .ck{opacity:1}
+.vopt:disabled{opacity:.6}
+.vstat{margin-top:18px;font-size:14px;color:var(--ink2);min-height:22px;font-family:var(--mono);letter-spacing:.04em}
+.vstat.ok{color:var(--lime)}.vstat.err{color:var(--coral)}
+.vres{margin-top:30px;border-top:1px solid var(--line);padding-top:24px}
+.vres .pc{grid-template-columns:1fr;gap:26px;justify-items:center}
+.vres .pc-donut{width:220px;height:220px}
+.vres .pc-total{font-size:64px}
+.vres .pc-bars{width:100%}
+.vres .pc-row .lab{font-size:16px}.vres .pc-row .val{font-size:22px}
+.vtabs{display:flex;gap:8px;margin-top:26px}
+.vtabs a{flex:1;text-align:center;padding:10px;border-radius:12px;border:1px solid var(--line2);text-decoration:none;font-size:14px;color:var(--ink2)}
+.vtabs a.on{border-color:var(--lime);color:var(--lime)}
+.vfoot{margin-top:40px;font-size:12px;color:var(--mute);text-align:center;line-height:1.7}
+
+/* ---------------- Script (print) mode ---------------- */
+body.mode-script{background:#F3F0E8;color:#1b1b18;color-scheme:light;height:auto;min-height:100%}
+body.mode-vote{overflow-x:hidden}
+#scriptApp{max-width:860px;margin:0 auto;padding:50px 40px 80px;font-family:var(--sans)}
+#scriptApp h1{font-family:var(--serif);font-size:36px;margin:0}
+#scriptApp .meta{color:#6b675e;font-size:14px;margin:10px 0 30px;line-height:1.7}
+#scriptApp .it{border-top:1px solid #d8d3c6;padding:18px 0;break-inside:avoid}
+#scriptApp .it h3{font-family:var(--serif);font-size:20px;margin:0;display:flex;justify-content:space-between;gap:20px}
+#scriptApp .it h3 span{font-family:var(--mono);font-size:12px;color:#8a857a;font-weight:400;white-space:nowrap}
+#scriptApp .it p{font-size:16px;line-height:1.9;margin:10px 0 0}
+#scriptApp .it .ex{font-size:14px;color:#6b675e;border-left:2px solid #cfc9b9;padding-left:12px}
+#scriptApp .pbtn{position:fixed;right:24px;top:24px;padding:10px 18px;border-radius:999px;border:1px solid #1b1b18;background:#1b1b18;color:#F3F0E8;cursor:pointer}
+@media print{#scriptApp .pbtn{display:none}#scriptApp{padding:0}}
+</style>
+</head>
+<body class="mode-deck">
+
+<!-- ======================= DECK ======================= -->
+<div id="app">
+<div id="stage">
+  <div class="bgfx"></div>
+  <div class="glow"></div><div class="glow g2"></div>
+  <header class="hud">
+    <div class="brand"><b>编辑生命</b> · EDITING LIFE</div>
+    <div class="chap" id="hudChap">序章</div>
+    <div class="num"><b id="hudNum">01</b> / <span id="hudTot">22</span></div>
+  </header>
+
+  <main id="deck">
+
+  <!-- 01 COVER -->
+  <section class="slide s-cover" data-id="cover" data-ch="P" data-title="封面">
+    <canvas class="helix-cv" id="helixCover" width="1600" height="900"></canvas>
+    <div class="cover-text">
+      <div class="kicker a">自然辩证法 · 课堂展示</div>
+      <h1 class="a" style="--d:1">编辑<span>生命</span></h1>
+      <p class="cover-sub a" style="--d:2">人类从认识自然到改造自然的辩证之路</p>
+      <div class="cover-cred a" style="--d:3">
+        <i>汇报人</i><b id="presenter">林孝义</b>
+        <i>小组</i><span>自然辩证法<em>·</em>第 28 组</span>
+        <i>组员</i><span>林之茵<em>·</em>余铭轩<em>·</em>邹敦阳<em>·</em>董信聪<em>·</em>侯晓洋<em>·</em>付玉标<em>·</em>张津铭</span>
+        <i>分工</i><span class="cr-tags"><span class="cr-tag">资料收集 林之茵 / 余铭轩</span><span class="cr-tag">页面设计 邹敦阳 / 董信聪</span><span class="cr-tag">内容校对 侯晓洋</span><span class="cr-tag">讲稿演示 付玉标 / 张津铭</span></span>
+        <i>代码实现</i><span>Opus 5.5</span>
+      </div>
+    </div>
+    <div class="cover-side a" style="--d:4">
+      <span class="hint">把鼠标划过双螺旋</span>
+      <span class="hint">试着 <b>「编辑」</b> 它</span>
+      <div class="edit-log" id="editLog">已编辑 <b>0</b> 个碱基</div>
+    </div>
+    <div class="cover-foot a" style="--d:5"><span>MENDEL 1866 → CRISPR 2012 → ?</span><span>按 → 开始</span></div>
+  </section>
+
+  <!-- 02 POLL 1 -->
+  <section class="slide s-poll" data-id="poll1" data-ch="P" data-title="开场投票">
+    <div class="grid">
+      <div>
+        <div class="kicker a">开场调查 · LIVE POLL 01</div>
+        <h2 class="title a" style="--d:1">你有没有对基因进行过<em>分子水平</em>的操作？</h2>
+        <p class="lead a" style="--d:2">比如 PCR、酶切连接、转化、测序建库、CRISPR……</p>
+        <div class="qr-wrap a" style="--d:3">
+          <div class="qr" data-qr="q1"></div>
+          <div class="qr-info">
+            <div class="big">扫码匿名投票</div>
+            <div class="url" data-url="q1"></div>
+            <div class="badge" data-badge><i></i><span>连接中…</span></div>
+            <div class="poll-tools" data-tools="q1"></div>
+          </div>
+        </div>
+      </div>
+      <div class="a" style="--d:2"><div data-chart="q1"></div><div class="pc-err" data-err="q1"></div></div>
+    </div>
+  </section>
+
+  <!-- 03 ACTS -->
+  <section class="slide" data-id="acts" data-ch="P" data-title="三幕结构">
+    <div class="kicker a">汇报结构 · THREE ACTS</div>
+    <h2 class="title a" style="--d:1">从<em>读懂</em>生命，到<em>改写</em>生命</h2>
+    <div class="acts">
+      <div class="act a" style="--d:2;--c:var(--lime)" data-goto="timeline">
+        <div class="roman">I</div><h3>认识</h3><div class="sub">从看见遗传到改写遗传</div>
+        <ul><li>孟德尔</li><li>摩尔根的果蝇</li><li>CRISPR</li><li>专利与诺奖</li><li>认识论</li></ul>
+        <div class="go">GO →</div>
+      </div>
+      <div class="act a" style="--d:3;--c:var(--blue)" data-goto="myths">
+        <div class="roman">II</div><h3>传播</h3><div class="sub">当"转基因"走出实验室</div>
+        <ul><li>四个误解</li><li>育种光谱</li><li>黄金大米</li><li>认知畸变</li></ul>
+        <div class="go">GO →</div>
+      </div>
+      <div class="act a" style="--d:4;--c:var(--coral)" data-goto="hjk">
+        <div class="roman">III</div><h3>边界</h3><div class="sub">当编辑的对象变成人</div>
+        <ul><li>贺建奎</li><li>"小美"案</li><li>被治愈的人</li><li>边界地图</li><li>敬畏与创造</li></ul>
+        <div class="go">GO →</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 TIMELINE -->
+  <section class="slide" data-id="timeline" data-ch="I" data-title="150年时间线">
+    <div class="kicker a">第一幕 · 认识 / 01</div>
+    <h2 class="title a" style="--d:1">150 年：从<em>看见</em>遗传，到<em>改写</em>遗传</h2>
+    <div class="tl a" style="--d:2" id="tl">
+      <div class="tl-legend"><span><i style="background:var(--blue)"></i>认识自然</span><span><i style="background:var(--lime)"></i>改造自然</span></div>
+      <div class="tl-line"></div>
+    </div>
+    <div class="tl-detail a" style="--d:3" id="tlDetail"></div>
+  </section>
+
+  <!-- 05 MORGAN -->
+  <section class="slide s-morgan" data-id="morgan" data-ch="I" data-title="摩尔根：怀疑者的果蝇">
+    <div class="grid">
+      <div>
+        <div class="kicker a">第一幕 · 认识 / 02</div>
+        <h2 class="title a" style="--d:1">怀疑者的<em>果蝇</em></h2>
+        <ul class="facts">
+          <li class="a" style="--d:2"><b>1909</b><span>摩尔根对孟德尔理论与染色体学说都心存怀疑——学生斯特蒂文特回忆，那时的他<strong>"完全可以被称为反孟德尔派"</strong>。</span></li>
+          <li class="a" style="--d:3"><b>蝇室</b><span>他选了繁殖快、好饲养的果蝇，在哥伦比亚大学一间摆满牛奶瓶的"蝇室"里，<strong>要亲自检验</strong>遗传理论。</span></li>
+          <li class="a" style="--d:4"><b>1910</b><span>一只<strong>白眼雄蝇</strong>出现了。杂交结果符合孟德尔比例，而白眼只出现在雄蝇身上——<strong>基因位于 X 染色体上</strong>。</span></li>
+          <li class="a" style="--d:5"><b>1933</b><span>本科生斯特蒂文特"熬了大半夜、连作业都没做"画出第一张基因连锁图；摩尔根获诺贝尔生理学或医学奖。</span></li>
+        </ul>
+        <div class="pull a" style="--d:6">怀疑者没有停在争论里，<br>而是把问题交给了实验。</div>
+      </div>
+      <div class="card sim a" style="--d:3">
+        <div class="sim-head">
+          <div class="sim-gen" id="simGen">P 亲代<small>红眼 ♀ X<sup>W</sup>X<sup>W</sup> × 白眼 ♂ X<sup>w</sup>Y</small></div>
+          <div class="sim-btns">
+            <button class="btn primary" id="simB1">① 杂交 → F1</button>
+            <button class="btn" id="simB2" disabled>② F1 互交 → F2</button>
+            <button class="btn" id="simB0">重置</button>
+          </div>
+        </div>
+        <div class="sim-field">
+          <div class="sim-sex"><h4>♀ 雌蝇 <span id="simCF">1</span></h4><div class="flies" id="simF"></div></div>
+          <div class="sim-sex"><h4>♂ 雄蝇 <span id="simCM">1</span></h4><div class="flies" id="simM"></div></div>
+        </div>
+        <table class="sim-table">
+          <thead><tr><th></th><th><span class="eye" style="background:var(--coral)"></span>红眼 ♀</th><th><span class="eye" style="background:var(--coral)"></span>红眼 ♂</th><th><span class="eye" style="background:#F4F1EA"></span>白眼 ♂</th><th><span class="eye" style="background:#F4F1EA"></span>白眼 ♀</th></tr></thead>
+          <tbody>
+            <tr><td>本次模拟 (F2)</td><td id="sm1">—</td><td id="sm2">—</td><td id="sm3">—</td><td id="sm4">—</td></tr>
+            <tr class="real"><td>摩尔根 1910 实测 (F2)</td><td>2459</td><td>1011</td><td>782</td><td>0</td></tr>
+          </tbody>
+        </table>
+        <div class="src" style="margin-top:10px">Morgan T.H., Science 32:120 (1910)；Letsou 2005, Dev Dyn；Sturtevant, A History of Genetics (1965)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 CRISPR -->
+  <section class="slide s-crispr" data-id="crispr" data-ch="I" data-title="CRISPR：细菌的免疫记忆">
+    <div class="grid">
+      <div>
+        <div class="kicker a">第一幕 · 认识 / 03</div>
+        <h2 class="title a" style="--d:1">基因剪刀，<br>原是<em>细菌的免疫记忆</em></h2>
+        <div class="mini-facts a" style="--d:2">
+          <div><b>1987</b><span>大阪大学石野良纯在大肠杆菌中发现一段奇怪的重复序列，论文里写着：<i>生物学意义未知</i>。</span></div>
+          <div><b>2005</b><span>西班牙的莫希卡发现间隔序列与病毒 DNA 吻合，推测这是细菌的免疫系统。</span></div>
+          <div><b>2007</b><span>证实它的是一家<b style="color:var(--ink);font-family:var(--sans)">酸奶公司</b>：丹尼斯克的研究员发现，嗜热链球菌靠 CRISPR 记住噬菌体。</span></div>
+        </div>
+        <ol class="steps a" style="--d:3" id="crSteps">
+          <li data-s="1"><b>1</b>记住入侵者</li>
+          <li data-s="2"><b>2</b>搜索 PAM</li>
+          <li data-s="3"><b>3</b>向导 RNA 配对</li>
+          <li data-s="4"><b>4</b>Cas9 剪切</li>
+          <li data-s="5"><b>5</b>修复 · 改写</li>
+        </ol>
+      </div>
+      <div class="card cr-stage a" style="--d:2">
+        <svg class="cr-svg cr" id="crSvg" viewBox="0 0 860 500"></svg>
+        <div class="cr-cap"><p id="crCap"></p>
+          <div class="row"><button class="btn" id="crPrev">←</button><button class="btn primary" id="crNext">下一步 →</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 CREDIT -->
+  <section class="slide" data-id="credit" data-ch="I" data-title="专利与诺奖：谁发明了CRISPR">
+    <div class="kicker a">第一幕 · 认识 / 04</div>
+    <h2 class="title a" style="--d:1">谁"发明"了 CRISPR？<br><span style="font-size:.62em;color:var(--ink2)">答案取决于你问谁</span></h2>
+    <div class="third a" style="--d:4"><b>被遗忘的第三人</b>：立陶宛的维尔吉尼尤斯·希克什尼斯独立发现了 Cas9 的可编程切割。2012 年 4 月他投稿《细胞》系列期刊，<b>未经同行评审即被拒</b>，直到 9 月才在 PNAS 发表。2018 年，他与卡彭蒂耶、杜德纳共享卡弗里奖。</div>
+    <div class="toggle a" style="--d:2" id="cvToggle"><span class="knob"></span><button data-v="nobel" class="on">问诺贝尔委员会</button><button data-v="patent">问专利法庭</button></div>
+    <div class="cv a" style="--d:3">
+      <div class="cv-p on" data-p="nobel">
+        <div class="q">问题：谁最先揭示了原理？</div>
+        <h3>卡彭蒂耶 &amp; 杜德纳<br>2020 年诺贝尔化学奖</h3>
+        <p>2012 年 6 月，她们在《科学》发文，在试管中证明：设计一条向导 RNA，就能让 Cas9 在指定位置切开 DNA。这是首次由两位女性共同获得（且无男性共同得主）的科学类诺贝尔奖。</p>
+        <span class="tag acc">评价逻辑：原理发现的优先性</span>
+      </div>
+      <div class="cv-p" data-p="patent">
+        <div class="q">问题：谁最先"构思并实现"了可用的发明？</div>
+        <h3>博德研究所（张锋）⟷ 加州大学方<br>十余年专利之争</h3>
+        <p>张锋团队 2013 年 1 月率先发表在人类与小鼠细胞中的编辑，并经加速审查于 2014 年 4 月获美国首个 CRISPR 专利。2022 年美国专利审判与上诉委员会把真核细胞应用的优先权判给博德；2025 年 5 月，联邦巡回上诉法院认定其"构思"标准适用有误，部分撤销并发回重审。</p>
+        <span class="tag acc">评价逻辑：可实施发明的优先性 · 至今未终局</span>
+      </div>
+    </div>
+    <div class="ptl a" style="--d:5" id="ptl"></div>
+    <div class="ptl-leg a" style="--d:5"><span><i style="background:var(--blue)"></i>论文</span><span><i style="background:#F2C94C"></i>专利 / 诉讼</span><span><i style="background:var(--lime)"></i>奖项</span></div>
+  </section>
+
+  <!-- 08 EPISTEME -->
+  <section class="slide s-episteme" data-id="episteme" data-ch="I" data-title="认识论小结">
+    <div class="grid">
+      <svg class="spiral a" id="spiral" viewBox="0 0 640 680"></svg>
+      <div>
+        <div class="kicker a">第一幕 · 认识 / 小结</div>
+        <h2 class="title a" style="--d:1">认识的<em>螺旋</em></h2>
+        <div class="prin">
+          <div class="card a" style="--d:2"><div class="n">一</div><div><h4>实践是检验真理的标准</h4><p>摩尔根没有在书斋里反驳孟德尔，而是把怀疑交给果蝇——实验结果推翻了他自己的成见。</p></div></div>
+          <div class="card a" style="--d:3"><div class="n">二</div><div><h4>认识是螺旋上升的</h4><p>从"因子"到染色体上的基因，到 DNA 分子，再到可编程的序列——每一次实践都修正并深化了上一次的认识。</p></div></div>
+          <div class="card a" style="--d:4"><div class="n">三</div><div><h4>认识具有社会性</h4><p>发现要经科学共同体检验与承认；诺奖与专利的分歧说明，"发现"与"发明"、原理与应用遵循不同的评价逻辑。</p></div></div>
+        </div>
+        <div class="quote a" style="--d:5">"实践、认识、再实践、再认识，这种形式，循环往复以至无穷，而实践和认识之每一循环的内容，都比较地进到了高一级的程度。"<cite>—— 毛泽东《实践论》（1937）</cite></div>
+        <div class="chips a" style="--d:6"><span>方法论：怀疑 → 求证</span><span>模式生物：化繁为简</span><span>还原分析 × 系统综合</span><span>可重复 · 可检验</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 MYTHS -->
+  <section class="slide" data-id="myths" data-ch="II" data-title="转基因的四个误解">
+    <div class="kicker a">第二幕 · 传播 / 01</div>
+    <h2 class="title a" style="--d:1">关于转基因，你听过这些说法吗？</h2>
+    <div class="myth-count hint a" style="--d:2">点击卡片翻面 · 已翻开 <b id="mythN">0</b> / 4</div>
+    <div class="myths" id="myths">
+      <div class="flip a" style="--d:2"><div class="flip-in">
+        <div class="face front"><div class="qm">“</div><div class="no">说法 01</div><div class="my">吃了转基因食品，会改变我自己的基因。</div><div class="tap">点击查看证据 ↻</div></div>
+        <div class="face back"><div class="verdict">✗ 不会</div><p>我们吃下的一切动植物都含有 DNA 和基因，它们在消化道中被分解，<b>不会整合进人体基因组</b>。</p><p>美国国家科学院 2016 年审阅了 900 余项研究与文献，<b>未发现</b>已上市转基因作物比传统作物对人体健康风险更高的证据。</p><div class="src">NASEM, Genetically Engineered Crops (2016)</div></div>
+      </div></div>
+      <div class="flip a" style="--d:3"><div class="flip-in">
+        <div class="face front"><div class="qm">“</div><div class="no">说法 02</div><div class="my">转基因是人类发明的"反自然"技术。</div><div class="tap">点击查看证据 ↻</div></div>
+        <div class="face back"><div class="verdict">✗ 自然早就"转"了</div><p>2015 年 PNAS 研究检测了 291 份栽培甘薯，<b>全部</b>含有来自农杆菌的 T-DNA，且部分基因仍在表达。</p><p>我们吃了几千年的甘薯，是一种<b>"天然转基因作物"</b>。</p><div class="src">Kyndt et al., PNAS 112:5844 (2015)</div></div>
+      </div></div>
+      <div class="flip a" style="--d:4"><div class="flip-in">
+        <div class="face front"><div class="qm">“</div><div class="no">说法 03</div><div class="my">传统育种是天然的，没有改变基因。</div><div class="tap">点击查看证据 ↻</div></div>
+        <div class="face back"><div class="verdict">✗ 一直在改</div><p>任何育种都在改变基因。仅用辐射、化学等<b>诱变</b>方法育成并正式登记的品种就有 <b>3502</b> 个，覆盖 247 个物种。</p><p>这些突变是<b>随机</b>产生的——我们甚至不知道具体改了哪里。</p><div class="src">FAO/IAEA Mutant Variety Database（2026 年 4 月）</div></div>
+      </div></div>
+      <div class="flip a" style="--d:5"><div class="flip-in">
+        <div class="face front"><div class="qm">“</div><div class="no">说法 04</div><div class="my">转基因只让大公司赚钱，对农民没有好处。</div><div class="tap">点击查看证据 ↻</div></div>
+        <div class="face back"><div class="verdict">△ 证据相反</div><p>覆盖 147 项研究的荟萃分析：采用转基因作物平均使<b>农药用量 −37%</b>、<b>产量 +22%</b>、<b>农民利润 +68%</b>。</p><p>发展中国家农民的利润增幅比发达国家<b>高约 60 个百分点</b>。</p><div class="src">Klümper &amp; Qaim, PLoS ONE 9:e111629 (2014)</div></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 10 SPECTRUM -->
+  <section class="slide" data-id="spectrum" data-ch="II" data-title="育种光谱">
+    <div class="kicker a">第二幕 · 传播 / 02</div>
+    <h2 class="title a" style="--d:1">育种光谱：我们<em>一直</em>在改变作物的基因</h2>
+    <div class="spec-track a" style="--d:2" id="specTrack"><div class="rail"></div></div>
+    <div class="card genome a" style="--d:3">
+      <div class="bar" id="genomeBar"></div>
+      <div class="gl hint"><span>作物基因组（示意）</span><span id="genomeLab"></span></div>
+    </div>
+    <div class="spec-info a" style="--d:4" id="specInfo"></div>
+    <div class="paradox a" style="--d:5"><b>一个悖论：</b>2018 年欧盟法院裁定（C-528/16），随机的传统诱变作物<b>豁免</b>转基因监管，而改动更少、更精确的基因编辑作物却须<b>按转基因严格监管</b>——越可知，反而越被怀疑。</div>
+  </section>
+
+  <!-- 11 GOLDEN RICE -->
+  <section class="slide s-golden" data-id="golden" data-ch="II" data-title="黄金大米">
+    <div class="kicker a">第二幕 · 传播 / 03</div>
+    <h2 class="title a" style="--d:1">黄金大米：<em style="color:#F2C94C">二十余年</em>，仍未走上餐桌</h2>
+    <div class="grid">
+      <div>
+        <div class="stat a" style="--d:2"><div class="bignum">1.9<small>亿</small></div><p>学龄前儿童血清视黄醇水平偏低（维生素 A 缺乏）——它是儿童可预防性失明的首要原因。<span class="src" style="display:block;margin-top:4px">WHO, 1995–2005 年数据（2009）</span></p></div>
+        <div class="stat a" style="--d:3"><div class="bignum">23<small>×</small></div><p>黄金大米 2 号的 β-胡萝卜素含量比第一代最高提高约 23 倍。<span class="src" style="display:block;margin-top:4px">Ye et al., Science 2000；Paine et al., Nat Biotechnol 2005</span></p></div>
+        <div class="stat a" style="--d:4;border:0"><div class="bignum" style="font-size:52px">2021<small>→</small>2024</div><p>菲律宾成为全球首个批准商业种植的国家；三年后，上诉法院以"环境令状"叫停。<span class="src" style="display:block;margin-top:4px">PhilRice 声明（2024）</span></p></div>
+      </div>
+      <div>
+        <div class="gr-tl a" style="--d:3" id="grTl">
+          <div class="gr-lab lime" style="top:0">▲ 科学轨道</div>
+          <div class="gr-lab coral" style="bottom:0">▼ 社会轨道</div>
+          <div class="gr-axis" id="grAxis"></div>
+        </div>
+        <div class="takeaway a" style="--d:5">技术安全，<b>不等于</b>社会信任——2008 年湖南儿童试验中<b>知情同意的缺失</b>，比任何谣言都更伤害这项技术。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 GAP -->
+  <section class="slide s-gap" data-id="gap" data-ch="II" data-title="科学与大众的落差">
+    <div class="kicker a">第二幕 · 传播 / 04</div>
+    <h2 class="title a" style="--d:1">同一个问题，<em>51</em> 个百分点的落差</h2>
+    <div class="grid">
+      <div class="a" style="--d:2">
+        <div class="hint" style="margin-bottom:30px">"转基因食品基本可以安全食用" · 认同比例 · Pew Research Center 2015</div>
+        <div class="pew" id="pew">
+          <div class="col"><div class="pct lime">88%</div><div class="bar" style="background:var(--lime)" data-h="88"></div><div class="who">美国科学促进会科学家<br><span class="src" style="font-size:11px">n = 3748</span></div></div>
+          <div class="col"><div class="pct blue">37%</div><div class="bar" style="background:var(--blue)" data-h="37"></div><div class="who">美国公众<br><span class="src" style="font-size:11px">n = 2002</span></div></div>
+          <div class="gapmark"><span>51 个百分点<br><small style="font-size:14px;color:var(--ink2)">所有议题中最大落差</small></span></div>
+        </div>
+      </div>
+      <div class="sumner a" style="--d:3" id="sumner">
+        <div class="hint">畸变从哪里开始？· 462 份英国大学新闻稿与 668 篇新闻 · BMJ 2014</div>
+        <div class="toggle" id="smToggle" style="margin-top:18px"><span class="knob"></span><button data-v="0" class="on">当新闻稿如实</button><button data-v="1">当新闻稿夸大</button></div>
+        <div class="row3">
+          <div class="sm-r"><div class="lab">给出超出研究的行为建议<span>新闻稿中出现率 40%</span></div><div class="t"><i data-a="17" data-b="58"></i><b></b></div></div>
+          <div class="sm-r"><div class="lab">把"相关"说成"因果"<span>新闻稿中出现率 33%</span></div><div class="t"><i data-a="18" data-b="81"></i><b></b></div></div>
+          <div class="sm-r"><div class="lab">把动物实验推及人类<span>新闻稿中出现率 36%</span></div><div class="t"><i data-a="10" data-b="86"></i><b></b></div></div>
+        </div>
+        <div class="sm-note">条形 = <b style="color:var(--ink)">后续新闻中出现同类夸大的比例</b>。研究同时发现：夸大并没有显著增加新闻报道量——<b style="color:var(--ink)">夸张换不来关注，却换来了误解</b>。</div>
+        <div class="src" style="margin-top:8px">Sumner et al., BMJ 349:g7015 (2014)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 DISTORTION -->
+  <section class="slide" data-id="distortion" data-ch="II" data-title="认知畸变的原理">
+    <div class="kicker a">第二幕 · 传播 / 05</div>
+    <h2 class="title a" style="--d:1">一句话的"<em>突变</em>"：科学概念如何在传播中畸变</h2>
+    <div class="chain a" style="--d:2" id="chain"></div>
+    <div class="ch-say a" style="--d:3"><div class="s" id="chSay"></div><button class="btn primary" id="chNext">传下去 →</button></div>
+    <div class="dist-grid">
+      <div class="mech">
+        <div class="card a" style="--d:4"><h4><span>01</span>风险感知</h4><p>斯洛维奇发现：人们会高估"未知、不可控、令人恐惧"的风险——转基因三者兼具，而熟悉的风险（如开车）被低估。</p></div>
+        <div class="card a" style="--d:5"><h4><span>02</span>自然启发</h4><p>"天然的 = 安全的"是一种直觉捷径。但甘薯本身就是"天然转基因"，毒蘑菇也是纯天然。</p></div>
+        <div class="card a" style="--d:6"><h4><span>03</span>框架效应</h4><p>同一项技术，叫"转基因"还是叫"育种"，唤起的情绪截然不同——标签本身就在传递立场。</p></div>
+        <div class="card a" style="--d:7"><h4><span>04</span>信任与利益</h4><p>公众关心的不只是"概率多少"，还有：谁获益？谁担风险？我能否选择？程序是否公正？</p></div>
+      </div>
+      <div class="princ a" style="--d:6">
+        <div class="k">科学如何不被曲解地进入社会</div>
+        <ol>
+          <li><span><b>源头准确：</b>研究者对新闻稿负责，不夸大</span></li>
+          <li><span><b>坦诚不确定：</b>讲清证据边界与局限</span></li>
+          <li><span><b>程序透明：</b>伦理与审批经得起追问</span></li>
+          <li><span><b>双向对话：</b>从"缺失模型"的单向灌输，走向公众参与</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 HE JIANKUI -->
+  <section class="slide case" data-id="hjk" data-ch="III" data-title="贺建奎：基因编辑婴儿">
+    <div class="grid">
+      <div>
+        <div class="kicker a">第三幕 · 边界 / 01</div>
+        <h2 class="title a" style="--d:1">2018：<br>被越过的<em>红线</em></h2>
+        <p class="lead a" style="--d:2;font-size:19px">贺建奎宣布，一对经 CCR5 基因编辑的双胞胎女婴出生——人类历史上第一次，被编辑的胚胎发育成了孩子，而且这些改动<b style="color:var(--ink)">会遗传给后代</b>。</p>
+        <ul class="vlist a" style="--d:3">
+          <li><b>2018.11</b>宣布双胞胎"露露""娜娜"出生，舆论哗然</li>
+          <li><b>2019.01</b>广东省调查组通报：伪造伦理审查书，逃避监管</li>
+          <li><b>2019.12.30</b>深圳南山区法院一审：以非法行医罪判处有期徒刑 3 年，罚金 300 万元</li>
+          <li><b>2021.03.01</b>《刑法修正案（十一）》施行，新增"非法植入基因编辑、克隆胚胎罪"</li>
+        </ul>
+      </div>
+      <div class="cross">
+        <div class="card a" style="--d:3"><div class="n">01</div><h4>没有医疗必要</h4><p>父亲是 HIV 感染者，但"精子洗涤"等成熟手段已能避免传给孩子。被编辑的是<b style="color:var(--ink)">健康胚胎</b>。</p></div>
+        <div class="card a" style="--d:4"><div class="n">02</div><h4>技术远未成熟</h4><p>编辑结果存在嵌合现象，也并非天然的 CCR5Δ32 突变；脱靶风险与长期影响均未评估。</p></div>
+        <div class="card a" style="--d:5"><div class="n">03</div><h4>程序造假</h4><p>伪造伦理审查材料；知情同意书以"艾滋病疫苗研发项目"为名，回避了胚胎编辑的实质与风险。</p></div>
+        <div class="card a" style="--d:6"><div class="n">04</div><h4>代价可遗传</h4><p>生殖系编辑会传给后代——风险由<b style="color:var(--ink)">从未有机会同意的未来世代</b>承担。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 QIU -->
+  <section class="slide case" data-id="qiu" data-ch="III" data-title="以治疗之名：小美案">
+    <div class="grid" style="grid-template-columns:540px 1fr">
+      <div>
+        <div class="kicker a">第三幕 · 边界 / 02</div>
+        <h2 class="title a" style="--d:1">2025：<br>以<em>治疗</em>之名</h2>
+        <p class="lead a" style="--d:2;font-size:19px">上海交通大学医学院仇子龙团队与新华医院合作，对一名 6 岁女孩实施了全球首例针对大脑的碱基编辑治疗。</p>
+        <ul class="vlist a" style="--d:3">
+          <li><b>2025.03 下旬</b>经腰椎穿刺注入携带碱基编辑器的病毒；7 天后女孩死亡</li>
+          <li><b>2026.02</b>团队在《自然》发表相关动物研究，未提及这名患者</li>
+          <li><b>2026.07.23</b>《科学》与"撤稿观察"联合调查报道曝光</li>
+          <li><b>2026.07.26–29</b>上海交大医学院成立专班全面调查；《自然》发布编辑提示并启动调查</li>
+          <li class="now"><b>至今</b>调查进行中，结论尚未公布</li>
+        </ul>
+      </div>
+      <div>
+        <div class="qfacts">
+          <div class="card a" style="--d:3"><div class="k">患者</div><p>"小美"（化名），6 岁，Snijders Blok-Campeau 综合征——<i>CHD3</i> 基因上一个碱基的突变（应为 C 却是 T）。</p></div>
+          <div class="card a" style="--d:4"><div class="k">结果</div><p>注射后第 7 天，因与治疗相关的<b class="coral">严重免疫反应</b>死亡。</p></div>
+          <div class="card a" style="--d:5"><div class="k">资金</div><p>父母从积蓄和亲戚处凑出约 <b>86 万美元</b>资助这项"一人试验"。</p></div>
+          <div class="card a" style="--d:6"><div class="k">监管</div><p>依据一项<b>无需国家监管部门审批</b>的规定开展；临床试验登记信息逾一年未更新。</p></div>
+        </div>
+        <div class="known a" style="--d:7">
+          <div class="y"><h5>七位独立专家的关切</h5>向家长淡化风险；忽视了动物实验中的安全信号；成功可能性低仍推进试验。</div>
+          <div class="n"><h5>尚待调查确认</h5>论文数据问题、知情同意是否充分、各方责任——应以官方调查结论为准。</div>
+        </div>
+        <div class="memo a" style="--d:8">资料来源：Science / Retraction Watch 联合调查（2026-07-23, doi:10.1126/science.zbr2v4d）及 2026-07-30 后续报道。"小美"为报道所用化名。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 SUCCESS -->
+  <section class="slide" data-id="success" data-ch="III" data-accent="lime" data-title="另一面：被治愈的人">
+    <div class="kicker a">第三幕 · 边界 / 03</div>
+    <h2 class="title a" style="--d:1">另一面：<em>被治愈的人</em></h2>
+    <div class="succ">
+      <div class="card a" style="--d:2">
+        <div class="yr">2019 → 2023 · 美国</div><h3>维多利亚·格雷</h3><div class="who">首位接受 CRISPR 治疗的美国镰状细胞病患者</div>
+        <dl><dt>技术</dt><dd>体外 CRISPR-Cas9：编辑自体造血干细胞的 <i>BCL11A</i> 增强子，重启胎儿血红蛋白</dd>
+        <dt>里程碑</dt><dd>2023 年 11 月英国、12 月 8 日美国 FDA 批准 Casgevy——全球首个 CRISPR 药物</dd></dl>
+        <div class="out">从发现"意义未知"的重复序列，到第一款药，36 年。</div>
+        <div class="src">FDA 新闻稿 2023-12-08；Frangoul et al., NEJM 2021</div>
+      </div>
+      <div class="card a" style="--d:3">
+        <div class="yr">2025 · 美国费城</div><h3>婴儿 KJ</h3><div class="who">CPS1 缺乏症，约百万分之一的致命代谢病</div>
+        <dl><dt>技术</dt><dd>体内碱基编辑，脂质纳米颗粒递送至肝脏，<b style="color:var(--ink)">只为他一人</b>设计</dd>
+        <dt>速度</dt><dd>约 6 个月完成设计与制备；FDA 一周批准；2025 年 2 月首剂，6 月出院回家</dd></dl>
+        <div class="out">全球首例"个体化定制"的基因编辑疗法。</div>
+        <div class="src">Musunuru et al., NEJM 2025, doi:10.1056/NEJMoa2504747</div>
+      </div>
+      <div class="card a" style="--d:4">
+        <div class="yr">2023 → 2026 · 中国</div><h3>CS-101 · 地中海贫血</h3><div class="who">上海科技大学 / 正序生物 / 广西医科大学一附院等</div>
+        <dl><dt>技术</dt><dd>体外碱基编辑 <i>HBG1/2</i> 启动子，模拟健康人群中天然存在的有益突变，<b style="color:var(--ink)">不切断 DNA 双链</b></dd>
+        <dt>结果</dt><dd>5 例重度患者中位随访 23 个月，未检出脱靶编辑，未见产品相关不良事件</dd></dl>
+        <div class="out">2026 年 4 月发表于《自然》，首批患者摆脱输血依赖。</div>
+        <div class="src">Nature 2026, s41586-026-10342-9；上海科技大学新闻 2026-04-08</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 COMPARE -->
+  <section class="slide" data-id="compare" data-ch="III" data-title="对比：差别在闸门">
+    <div class="kicker a">第三幕 · 边界 / 04</div>
+    <h2 class="title a" style="--d:1">差别不在技术，而在<em>每一道闸门</em></h2>
+    <table class="mx a" style="--d:2" id="mx"></table>
+    <div class="mx-cap a" style="--d:3"><div class="q" id="mxQ">点击上方任一闸门，查看各案例的情况。</div>
+      <div class="legend"><span class="sym y">✓</span>满足 <span class="sym q">△</span>存疑 / 被质疑 <span class="sym n">✗</span>违背</div></div>
+  </section>
+
+  <!-- 18 BOUNDARY -->
+  <section class="slide s-boundary" data-id="boundary" data-ch="III" data-title="边界地图">
+    <div class="kicker a">第三幕 · 边界 / 05</div>
+    <h2 class="title a" style="--d:1">边界在哪里？一张<em>地图</em></h2>
+    <div class="grid">
+      <div class="bmap a" style="--d:2" id="bmap">
+        <div class="bq q1" data-q="0" style="--c:var(--lime)"><div class="bt">体细胞 × 治疗</div><div class="bs">严格监管下可推进</div></div>
+        <div class="bq q2" data-q="1" style="--c:var(--coral)"><div class="bt">生殖系 × 治疗/预防</div><div class="bs">现阶段不可接受</div></div>
+        <div class="bq q3" data-q="2" style="--c:var(--violet)"><div class="bt">体细胞 × 增强</div><div class="bs">争议巨大 · 无获批先例</div></div>
+        <div class="bq q4" data-q="3" style="--c:var(--coral)"><div class="bt">生殖系 × 增强</div><div class="bs">红线之外</div></div>
+        <div class="bdot" style="--c:var(--lime);left:70px;bottom:195px"><i></i>CS-101</div>
+        <div class="bdot" style="--c:var(--lime);left:230px;bottom:195px"><i></i>婴儿 KJ</div>
+        <div class="bdot" style="--c:var(--lime);left:70px;bottom:140px"><i></i>Casgevy</div>
+        <div class="bdot ring" style="--c:var(--coral);left:70px;bottom:85px"><i></i>"小美"案（程序失守）</div>
+        <div class="bdot" style="--c:var(--coral);left:430px;bottom:160px"><i></i>贺建奎（2018）</div>
+        <div class="bdot ring" style="--c:var(--violet);left:110px;top:115px"><i></i>基因兴奋剂</div>
+        <div class="bdot ring" style="--c:var(--coral);left:470px;top:115px"><i></i>"设计婴儿"</div>
+        <div class="bax x"><span>体细胞 · 只影响本人</span><span>生殖系 · 遗传给后代 →</span></div>
+        <div class="bax y"><span>治疗疾病</span><span>增强"完美" →</span></div>
+      </div>
+      <div class="bpanel a" style="--d:3" id="bpanel"></div>
+    </div>
+  </section>
+
+  <!-- 19 DIALECTIC -->
+  <section class="slide s-dialectic" data-id="dialectic" data-ch="III" data-accent="violet" data-title="敬畏与创造">
+    <div class="kicker a">第三幕 · 边界 / 辩证</div>
+    <h2 class="title a" style="--d:1">敬畏与创造：<em>对立统一</em></h2>
+    <div class="grid">
+      <div class="qcard a" style="--d:2"><span class="mk">“</span>我们不要过分陶醉于我们人类对自然界的胜利。对于每一次这样的胜利，自然界都对我们进行报复。<cite>恩格斯《自然辩证法》<br>·劳动在从猿到人的转变中的作用</cite></div>
+      <div class="a" style="--d:3">
+        <svg class="scale" id="scale" viewBox="0 0 640 330"></svg>
+        <div class="dial"><input type="range" min="0" max="100" value="50" id="dialR" aria-label="敬畏与创造"><div class="ends"><span>← 只有敬畏</span><span>平衡</span><span>只有创造 →</span></div></div>
+        <div class="dout" id="dout"></div>
+      </div>
+      <div class="qcard a" style="--d:4"><span class="mk">“</span>自由不在于幻想中摆脱自然规律而独立，而在于认识这些规律，从而能够有计划地使自然规律为一定的目的服务。<cite>恩格斯《反杜林论》</cite></div>
+    </div>
+  </section>
+
+  <!-- 20 POLL 2 -->
+  <section class="slide s-poll" data-id="poll2" data-ch="E" data-title="结尾投票">
+    <div class="grid">
+      <div>
+        <div class="kicker a">结尾调查 · LIVE POLL 02</div>
+        <h2 class="title a" style="--d:1">如果给你一个机会，你会为了变得更<em>"完美"</em>选择被编辑吗？</h2>
+        <div class="qr-wrap a" style="--d:2">
+          <div class="qr" data-qr="q2"></div>
+          <div class="qr-info">
+            <div class="big">扫码匿名投票</div>
+            <div class="url" data-url="q2"></div>
+            <div class="badge" data-badge><i></i><span>连接中…</span></div>
+            <div class="poll-tools" data-tools="q2"></div>
+          </div>
+        </div>
+        <div class="recap a" style="--d:3"><span class="hint">回看开场 · 你有没有对基因进行过分子水平的操作？</span><div class="recap-bars" id="recap"></div></div>
+      </div>
+      <div class="a" style="--d:2"><div data-chart="q2"></div><div class="pc-err" data-err="q2"></div></div>
+    </div>
+  </section>
+
+  <!-- 21 FINALE -->
+  <section class="slide s-finale" data-id="finale" data-ch="E" data-title="结语">
+    <canvas class="helix-cv" id="helixEnd" width="1600" height="900"></canvas>
+    <div class="fin">
+      <div class="kicker a">结语 · CODA</div>
+      <div class="ln dim a" style="--d:1;margin-top:26px">我们编辑的是生命，</div>
+      <div class="ln a" style="--d:3">被检验的是<em>人类自己</em>。</div>
+    </div>
+    <div class="thanks a" style="--d:5"><div class="t">谢谢</div><span class="hint">Q &amp; A</span></div>
+    <div class="fin3">
+      <div class="a" style="--d:6;--c:var(--lime)"><b>I · 认识</b><p>在实践中怀疑，<br>在实践中求证。</p></div>
+      <div class="a" style="--d:7;--c:var(--blue)"><b>II · 传播</b><p>科学进入社会，<br>需要准确，更需要对话。</p></div>
+      <div class="a" style="--d:8;--c:var(--coral)"><b>III · 边界</b><p>敬畏不是停步，<br>创造需要边界。</p></div>
+    </div>
+  </section>
+
+  <!-- 22 REFS -->
+  <section class="slide" data-id="refs" data-ch="E" data-title="参考文献">
+    <div class="kicker a">参考文献 · REFERENCES</div>
+    <h2 class="title a" style="--d:1">参考文献</h2>
+    <div class="refs-note a" style="--d:2">所有事实性陈述均有来源。2026 年"小美"案相关调查尚在进行，请以官方最终结论为准。可滚动查看 ↓</div>
+    <div class="refs a" style="--d:2"><div class="refs-in">
+      <h4>一 · 遗传学与基因编辑史</h4>
+      <ol>
+        <li>Mendel G. Versuche über Pflanzen-Hybriden. <i>Verh Naturforsch Ver Brünn</i> 4:3–47 (1866). <a href="http://www.mendelweb.org/Mendel.html" target="_blank">mendelweb.org</a></li>
+        <li>Morgan TH. Sex limited inheritance in <i>Drosophila</i>. <i>Science</i> 32:120–122 (1910). <a href="https://doi.org/10.1126/science.32.812.120" target="_blank">doi:10.1126/science.32.812.120</a></li>
+        <li>Letsou A, Bohmann D. Small flies—Big discoveries: Nearly a century of <i>Drosophila</i> genetics and development. <i>Dev Dyn</i> (2005). <a href="https://doi.org/10.1002/dvdy.20307" target="_blank">doi:10.1002/dvdy.20307</a></li>
+        <li>Sturtevant AH. <i>A History of Genetics</i>. Harper &amp; Row (1965)；Cold Spring Harbor 再版 (2001).</li>
+        <li>Lord of the Fly Room. <i>Proto Magazine</i>. <a href="https://protomag.com/genetics/drosophila-lord-of-the-fly-room/" target="_blank">protomag.com</a></li>
+        <li>The Nobel Prize in Physiology or Medicine 1933 — T. H. Morgan. <a href="https://www.nobelprize.org/prizes/medicine/1933/morgan/facts/" target="_blank">nobelprize.org</a></li>
+        <li>Avery OT, MacLeod CM, McCarty M. <i>J Exp Med</i> 79:137–158 (1944).</li>
+        <li>Hershey AD, Chase M. <i>J Gen Physiol</i> 36:39–56 (1952).</li>
+        <li>Watson JD, Crick FHC. <i>Nature</i> 171:737–738 (1953)；Franklin RE, Gosling RG. <i>Nature</i> 171:740–741 (1953).</li>
+        <li>Cohen SN, Chang ACY, Boyer HW, Helling RB. <i>PNAS</i> 70:3240–3244 (1973).</li>
+        <li>Berg P et al. Summary statement of the Asilomar conference on recombinant DNA molecules. <i>PNAS</i> 72:1981–1984 (1975).</li>
+        <li>Ishino Y et al. <i>J Bacteriol</i> 169:5429–5433 (1987).</li>
+        <li>Mojica FJM et al. <i>J Mol Evol</i> 60:174–182 (2005).</li>
+        <li>Barrangou R et al. CRISPR provides acquired resistance against viruses in prokaryotes. <i>Science</i> 315:1709–1712 (2007).</li>
+        <li>Jinek M et al. <i>Science</i> 337:816–821 (2012).</li>
+        <li>Gasiunas G, Barrangou R, Horvath P, Siksnys V. <i>PNAS</i> 109:E2579–E2586 (2012).</li>
+        <li>Cong L et al. <i>Science</i> 339:819–823 (2013)；Mali P et al. <i>Science</i> 339:823–826 (2013).</li>
+        <li>Komor AC et al. Programmable editing of a target base in genomic DNA without double-stranded DNA cleavage. <i>Nature</i> 533:420–424 (2016).</li>
+        <li>The Nobel Prize in Chemistry 2020. <a href="https://www.nobelprize.org/prizes/chemistry/2020/press-release/" target="_blank">nobelprize.org</a></li>
+        <li><i>Regents of the Univ. of California v. Broad Institute</i>, Fed. Cir. Nos. 2022-1594, -1653 (May 12, 2025). 解读：<a href="https://www.mofo.com/resources/insights/250513-federal-circuit-vacates-and-remands" target="_blank">Morrison Foerster</a>；<a href="https://ipwatchdog.com/2025/05/12/cafc-vacates-crispr-ruling-broad-due-ptab-error-conception-standard/" target="_blank">IPWatchdog</a></li>
+        <li>With prestigious prize, an overshadowed CRISPR researcher wins the spotlight. <i>Science</i> (2018). <a href="https://www.science.org/content/article/prestigious-prize-overshadowed-crispr-researcher-wins-spotlight" target="_blank">science.org</a></li>
+        <li>3 CRISPR Scientists Win Prestigious Award, Fanning Controversy over Credit. <i>Scientific American</i> (2018). <a href="https://www.scientificamerican.com/article/three-crispr-scientists-win-prestigious-award-fanning-controversy-over-credit/" target="_blank">scientificamerican.com</a></li>
+      </ol>
+      <h4>二 · 转基因与科学传播</h4>
+      <ol start="23">
+        <li>Pew Research Center. Public and Scientists' Views on Science and Society (2015-01-29). <a href="https://www.pewresearch.org/science/2015/01/29/public-and-scientists-views-on-science-and-society/" target="_blank">pewresearch.org</a></li>
+        <li>Kyndt T et al. The genome of cultivated sweet potato contains <i>Agrobacterium</i> T-DNAs with expressed genes. <i>PNAS</i> 112:5844–5849 (2015). <a href="https://doi.org/10.1073/pnas.1419685112" target="_blank">doi:10.1073/pnas.1419685112</a></li>
+        <li>Klümper W, Qaim M. A meta-analysis of the impacts of genetically modified crops. <i>PLoS ONE</i> 9:e111629 (2014). <a href="https://doi.org/10.1371/journal.pone.0111629" target="_blank">doi:10.1371/journal.pone.0111629</a></li>
+        <li>National Academies of Sciences, Engineering, and Medicine. <i>Genetically Engineered Crops: Experiences and Prospects</i> (2016). <a href="https://doi.org/10.17226/23395" target="_blank">doi:10.17226/23395</a></li>
+        <li>FAO/IAEA Mutant Variety Database. <a href="https://nucleus.iaea.org/sites/mvd/" target="_blank">IAEA MVD</a></li>
+        <li>Court of Justice of the EU, Case C-528/16, Confédération paysanne and Others (2018-07-25).</li>
+        <li>Ye X et al. <i>Science</i> 287:303–305 (2000)；Paine JA et al. <i>Nat Biotechnol</i> 23:482–487 (2005).</li>
+        <li>WHO. Global prevalence of vitamin A deficiency in populations at risk 1995–2005 (2009).</li>
+        <li>Laureates Letter Supporting Precision Agriculture (GMOs) (2016). <a href="https://www.supportprecisionagriculture.org/" target="_blank">supportprecisionagriculture.org</a></li>
+        <li>PhilRice acknowledges Court of Appeals' decision granting the Writ of Kalikasan against Golden Rice (2024). <a href="https://www.philrice.gov.ph/philrice-acknowledges-court-of-appeals-decision-granting-the-writ-of-kalikasan-against-golden-rice-in-the-philippines/" target="_blank">philrice.gov.ph</a></li>
+        <li>"黄金大米"论文遭学术期刊撤稿，被认为有"道德错误"．澎湃新闻 (2015-08-03). <a href="https://www.thepaper.cn/newsDetail_forward_1359865" target="_blank">thepaper.cn</a></li>
+        <li>Sumner P et al. The association between exaggeration in health related science news and academic press releases. <i>BMJ</i> 349:g7015 (2014). <a href="https://doi.org/10.1136/bmj.g7015" target="_blank">doi:10.1136/bmj.g7015</a></li>
+        <li>Slovic P. Perception of risk. <i>Science</i> 236:280–285 (1987).</li>
+      </ol>
+      <h4>三 · 人类基因编辑：案例与治理</h4>
+      <ol start="36">
+        <li>Cyranoski D. What CRISPR-baby prison sentences mean for research. <i>Nature</i> 577:154–155 (2020).</li>
+        <li>《中华人民共和国刑法修正案（十一）》（2021-03-01 施行），刑法第三百三十六条之一。</li>
+        <li>《中华人民共和国民法典》第一千零九条（2021）。</li>
+        <li>国家卫生健康委等．《涉及人的生命科学和医学研究伦理审查办法》（2023）。</li>
+        <li>Exclusive: Death of girl in Chinese gene-editing trial was never made public. <i>Science</i> / Retraction Watch (2026-07-23). <a href="https://doi.org/10.1126/science.zbr2v4d" target="_blank">doi:10.1126/science.zbr2v4d</a></li>
+        <li>Journal, university investigations launched into gene-editing death. Retraction Watch (2026-07-30). <a href="https://retractionwatch.com/2026/07/30/nature-university-china-investigations-gene-editing-death-science/" target="_blank">retractionwatch.com</a></li>
+        <li>Chinese university launches probe into girl's gene-editing death. <i>Science</i> (2026). <a href="https://www.science.org/content/article/chinese-university-launches-probe-girl-s-gene-editing-death" target="_blank">science.org</a></li>
+        <li>FDA Approves First Gene Therapies to Treat Patients with Sickle Cell Disease (2023-12-08). <a href="https://www.fda.gov/news-events/press-announcements/fda-approves-first-gene-therapies-treat-patients-sickle-cell-disease" target="_blank">fda.gov</a></li>
+        <li>Frangoul H et al. CRISPR-Cas9 gene editing for sickle cell disease and β-thalassemia. <i>NEJM</i> 384:252–260 (2021).</li>
+        <li>NPR. A Mississippi woman's journey through gene-editing treatment (2019–2023). <a href="https://www.npr.org/sections/health-shots/2023/12/08/1217123089/fda-approves-first-gene-editing-treatments-for-human-illness" target="_blank">npr.org</a></li>
+        <li>Musunuru K, Ahrens-Nicklas RC et al. Patient-specific in vivo gene editing to treat a rare genetic disease. <i>NEJM</i> (2025). <a href="https://doi.org/10.1056/NEJMoa2504747" target="_blank">doi:10.1056/NEJMoa2504747</a></li>
+        <li>CHOP. World's First Patient Treated with Personalized CRISPR Gene Editing Therapy (2025). <a href="https://www.chop.edu/news/worlds-first-patient-treated-personalized-crispr-gene-editing-therapy-childrens-hospital" target="_blank">chop.edu</a></li>
+        <li>Clinical application of base editing for treating β-thalassaemia. <i>Nature</i> (2026). <a href="https://www.nature.com/articles/s41586-026-10342-9" target="_blank">nature.com</a>；上海科技大学新闻 (2026-04-08). <a href="https://www.shanghaitech.edu.cn/2026/0408/c1006a1120556/page.htm" target="_blank">shanghaitech.edu.cn</a></li>
+        <li>Statement from the Organising Committee of the Third International Summit on Human Genome Editing (2023-03-08). <a href="https://royalsociety.org/news/2023/03/statement-third-international-summit-human-genome-editing/" target="_blank">royalsociety.org</a></li>
+        <li>WHO. Human genome editing: a framework for governance; Recommendations (2021).</li>
+        <li>World Anti-Doping Agency. Prohibited List — M3 Gene and Cell Doping.</li>
+      </ol>
+      <h4>四 · 自然辩证法与认识论</h4>
+      <ol start="52">
+        <li>恩格斯．《自然辩证法》·《劳动在从猿到人的转变中的作用》．见《马克思恩格斯选集》第 3 卷，人民出版社。</li>
+        <li>恩格斯．《反杜林论》．见《马克思恩格斯选集》第 3 卷，人民出版社。</li>
+        <li>毛泽东．《实践论》（1937）．见《毛泽东选集》第一卷，人民出版社。</li>
+      </ol>
+    </div></div>
+  </section>
+
+  </main>
+  <div id="progress"></div>
+  <div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd>翻页 &nbsp; <kbd>N</kbd>讲稿 &nbsp; <kbd>O</kbd>总览 &nbsp; <kbd>F</kbd>全屏 &nbsp; <kbd>T</kbd>计时 &nbsp; <kbd>H</kbd>隐藏提示</div>
+  <div id="timer" hidden>00:00</div>
+  <div class="grain"></div>
+</div>
+</div>
+
+<!-- Presenter notes -->
+<div id="notes">
+  <div>
+    <div class="nh"><b id="nNum">01</b><span id="nTitle"></span><span id="nTime"></span></div>
+    <div class="nt" id="nText"></div>
+  </div>
+  <div class="side">
+    <div><div class="k">下一页</div><div class="v" id="nNext">—</div></div>
+    <div><div class="k">已用时间</div><div class="v mono" id="nClock">计时未开始（按 T）</div></div>
+    <div class="row"><button class="btn" id="nSmaller">A−</button><button class="btn" id="nBigger">A+</button><a class="btn" href="?script=1" target="_blank">打印讲稿</a></div>
+  </div>
+</div>
+<div id="overview"><h2>总览 · 点击跳转</h2><div class="ov" id="ovList"></div></div>
+
+<!-- Vote (mobile) -->
+<div id="voteApp" hidden><div class="glow"></div><div class="vwrap" id="vwrap"></div></div>
+<!-- Script (print) -->
+<div id="scriptApp" hidden></div>
+
+<script>
+/* =====================================================================
+   POLL ENGINE · 云端(Supabase REST 轮询) / 本地演示(localStorage + BroadcastChannel)
+   ===================================================================== */
+(function(){
+  const CFG = Object.assign({SUPABASE_URL:"",SUPABASE_KEY:"",SESSION:"default",POLL_INTERVAL:2000,VOTE_BASE_URL:""}, window.POLL_CONFIG||{});
+  const qs = new URLSearchParams(location.search);
+  if (qs.get("s")) CFG.SESSION = qs.get("s").slice(0,40);
+  const URLB = (CFG.SUPABASE_URL||"").replace(/\/+$/,"");
+  const CLOUD = qs.get("mode")!=="local" && /^https:\/\//.test(URLB) && (CFG.SUPABASE_KEY||"").length>20;
+
+  const POLLS = {
+    q1:{ title:"你有没有对基因进行过分子水平的操作？", hint:"比如 PCR、酶切连接、转化、测序建库、CRISPR……",
+      options:[
+        {id:"yes",   label:"做过",     sub:"亲手动过 DNA", c:"#D7F25A"},
+        {id:"no",    label:"没做过",   sub:"还没有机会",   c:"#7FA8FF"},
+        {id:"unsure",label:"说不清",   sub:"不确定算不算", c:"#C3A6FF"}
+      ]},
+    q2:{ title:"如果给你一个机会，你会为了变得更“完美”选择被编辑吗？", hint:"匿名投票，没有标准答案。",
+      options:[
+        {id:"yes",   label:"会",               sub:"为什么不呢？",       c:"#FF6A4D"},
+        {id:"no",    label:"不会",             sub:"我接受不完美的自己", c:"#7FA8FF"},
+        {id:"cure",  label:"只为治病，不为“完美”", sub:"边界在治疗",     c:"#D7F25A"},
+        {id:"unsure",label:"还没想好",         sub:"需要更多了解",       c:"#C3A6FF"}
+      ]}
+  };
+
+  const LS = {
+    get(k){ try{return localStorage.getItem(k)}catch(e){return null} },
+    set(k,v){ try{localStorage.setItem(k,v)}catch(e){} },
+    del(k){ try{localStorage.removeItem(k)}catch(e){} }
+  };
+  function rid(){ return (window.crypto&&crypto.randomUUID)? crypto.randomUUID() : ("v"+Date.now().toString(36)+Math.random().toString(36).slice(2,12)); }
+  function voterId(){ let id=LS.get("el_voter"); if(!id){ id=rid(); LS.set("el_voter",id);} return id; }
+  const pollKey = q => CFG.SESSION+":"+q;
+
+  /* ---------- cloud ---------- */
+  function hdr(extra){
+    const h = {"apikey":CFG.SUPABASE_KEY,"Content-Type":"application/json"};
+    if(!/^sb_/.test(CFG.SUPABASE_KEY)) h["Authorization"]="Bearer "+CFG.SUPABASE_KEY;
+    return Object.assign(h, extra||{});
+  }
+  async function cloudVote(q,opt){
+    const r = await fetch(URLB+"/rest/v1/votes?on_conflict=poll,voter",{method:"POST",headers:hdr({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+      body:JSON.stringify([{poll:pollKey(q),option:opt,voter:voterId()}])});
+    if(!r.ok) throw new Error("投票失败 HTTP "+r.status+" "+(await r.text()).slice(0,120));
+  }
+  let rpcOK = true;
+  async function cloudCounts(q){
+    const out={};
+    if(rpcOK){
+      const r = await fetch(URLB+"/rest/v1/rpc/poll_counts",{method:"POST",headers:hdr(),body:JSON.stringify({p:pollKey(q)}),cache:"no-store"});
+      if(r.ok){ const rows=await r.json(); rows.forEach(x=>out[x.option]=Number(x.n)); return out; }
+      if(r.status===404) rpcOK=false; else throw new Error("读取失败 HTTP "+r.status);
+    }
+    const r2 = await fetch(URLB+"/rest/v1/votes?select=option&poll=eq."+encodeURIComponent(pollKey(q)),{headers:hdr(),cache:"no-store"});
+    if(!r2.ok) throw new Error("读取失败 HTTP "+r2.status);
+    (await r2.json()).forEach(x=>out[x.option]=(out[x.option]||0)+1);
+    return out;
+  }
+
+  /* ---------- local demo ---------- */
+  const bc = ("BroadcastChannel" in window)? new BroadcastChannel("el_poll") : null;
+  const lkey = q => "el_local:"+pollKey(q);
+  function lread(q){ try{return JSON.parse(LS.get(lkey(q))||"{}")}catch(e){return {}} }
+  function lwrite(q,o){ LS.set(lkey(q),JSON.stringify(o)); if(bc) bc.postMessage({q}); window.dispatchEvent(new CustomEvent("el-local",{detail:{q}})); }
+  function localVote(q,opt,vid){ const o=lread(q); o[vid||voterId()]=opt; lwrite(q,o); }
+  function localCounts(q){ const o=lread(q), out={}; Object.values(o).forEach(v=>out[v]=(out[v]||0)+1); return out; }
+
+  const API = {
+    POLLS, CFG, CLOUD,
+    myVote(q){ return LS.get("el_my:"+pollKey(q)); },
+    async vote(q,opt){
+      if(!POLLS[q]||!POLLS[q].options.some(o=>o.id===opt)) throw new Error("无效选项");
+      if(CLOUD) await cloudVote(q,opt); else localVote(q,opt);
+      LS.set("el_my:"+pollKey(q),opt);
+    },
+    async counts(q){ return CLOUD? cloudCounts(q) : localCounts(q); },
+    demoAdd(q,opt){ if(!CLOUD) localVote(q,opt,"demo_"+rid()); },
+    demoReset(q){ if(!CLOUD){ LS.del(lkey(q)); LS.del("el_my:"+pollKey(q)); if(bc) bc.postMessage({q}); window.dispatchEvent(new CustomEvent("el-local",{detail:{q}})); } },
+    subscribe(q,cb){
+      let busy=false, dead=false;
+      const tick = async ()=>{ if(busy||dead) return; busy=true;
+        try{ cb(await API.counts(q),null); }catch(e){ cb(null,e); } finally{ busy=false; } };
+      tick();
+      const iv = setInterval(tick, CLOUD? Math.max(800,CFG.POLL_INTERVAL) : 1500);
+      const onMsg = e=>{ if(!e.data||e.data.q===q) tick(); };
+      const onSt  = e=>{ if(e.key && e.key.indexOf("el_local:")===0) tick(); };
+      const onLoc = e=>{ if(!e.detail||e.detail.q===q) tick(); };
+      if(!CLOUD){ bc&&bc.addEventListener("message",onMsg); window.addEventListener("storage",onSt); window.addEventListener("el-local",onLoc); }
+      return ()=>{ dead=true; clearInterval(iv); if(bc) bc.removeEventListener("message",onMsg); window.removeEventListener("storage",onSt); window.removeEventListener("el-local",onLoc); };
+    },
+    voteURL(q){
+      const base = CFG.VOTE_BASE_URL || location.href.split(/[?#]/)[0];
+      const u = new URL(base, location.href); u.hash="";
+      u.search=""; u.searchParams.set("vote",q);
+      if(CFG.SESSION && CFG.SESSION!=="class-2026") u.searchParams.set("s",CFG.SESSION);
+      if(qs.get("mode")==="local") u.searchParams.set("mode","local");
+      return u.href;
+    }
+  };
+  window.PollAPI = API;
+
+  /* ---------- Chart component (pure SVG/CSS) ---------- */
+  class PollChart{
+    constructor(el,q,opt){
+      this.el=el; this.q=q; this.p=POLLS[q]; this.opt=Object.assign({clickable:false,onPick:null},opt||{});
+      this.total=0; this.shown=0; this.render();
+    }
+    render(){
+      const R=80, segs=this.p.options.map((o,i)=>`<circle class="sg" data-i="${i}" cx="100" cy="100" r="${R}" pathLength="100" stroke="${o.c}" stroke-dasharray="0 100" stroke-dashoffset="0"/>`).join("");
+      const rows=this.p.options.map((o,i)=>`<div class="pc-row" data-i="${i}" style="--c:${o.c}"><div class="lab">${o.label}${o.sub?`<small>${o.sub}</small>`:""}</div><div class="val"><span class="pct">0%</span><small class="cnt">0 票</small></div><div class="trk"><div class="fill"></div></div></div>`).join("");
+      this.el.innerHTML=`<div class="pc${this.opt.clickable?" clickable":""}"><div class="pc-donut"><svg viewBox="0 0 200 200"><circle class="ring" cx="100" cy="100" r="96" pathLength="100"/><circle class="trk" cx="100" cy="100" r="${R}"/>${segs}</svg><div class="pc-center"><b class="pc-total">0</b><span>人已投票</span></div></div><div class="pc-bars">${rows}</div></div>`;
+      this.$tot=this.el.querySelector(".pc-total");
+      this.$segs=[...this.el.querySelectorAll(".sg")];
+      this.$rows=[...this.el.querySelectorAll(".pc-row")];
+      if(this.opt.clickable && this.opt.onPick){
+        this.$rows.forEach(r=>r.addEventListener("click",()=>this.opt.onPick(this.p.options[+r.dataset.i].id)));
+      }
+    }
+    update(counts){
+      const ns=this.p.options.map(o=>counts&&counts[o.id]||0);
+      const tot=ns.reduce((a,b)=>a+b,0);
+      const max=Math.max(...ns);
+      let cum=0;
+      ns.forEach((n,i)=>{
+        const pct = tot? n/tot*100 : 0;
+        const vis = pct>0? Math.max(0,pct-(tot&&pct<100?0.8:0)) : 0;
+        const s=this.$segs[i];
+        s.style.strokeDasharray = vis.toFixed(2)+" "+(100-vis).toFixed(2);
+        s.style.strokeDashoffset = (-cum).toFixed(2);
+        s.classList.toggle("top", tot>0 && n===max);
+        cum+=pct;
+        const r=this.$rows[i];
+        r.querySelector(".fill").style.width=pct.toFixed(1)+"%";
+        r.querySelector(".pct").textContent=Math.round(pct)+"%";
+        r.querySelector(".cnt").textContent=n+" 票";
+        r.classList.toggle("top", tot>0 && n===max);
+      });
+      if(tot!==this.total){
+        const from=this.shown, to=tot, t0=performance.now(), el=this.$tot;
+        if(tot>this.total){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+        this.total=tot;
+        const step=t=>{ const k=Math.min(1,(t-t0)/700); const v=Math.round(from+(to-from)*(1-Math.pow(1-k,3))); el.textContent=v; this.shown=v; if(k<1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      }
+      return {tot,ns};
+    }
+  }
+  window.PollChart = PollChart;
+
+  /* ---------- QR (qrcode-generator via CDN, with fallbacks) ---------- */
+  const QR_SRC=[
+    "https://cdn.bootcdn.net/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",
+    "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js",
+    "https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"];
+  let qrLoading=null;
+  function loadQR(){
+    if(window.qrcode) return Promise.resolve(true);
+    if(qrLoading) return qrLoading;
+    qrLoading=new Promise(res=>{
+      let i=0;
+      const next=()=>{ if(window.qrcode) return res(true); if(i>=QR_SRC.length) return res(false);
+        const s=document.createElement("script"); s.src=QR_SRC[i++]; let done=false;
+        const fin=ok=>{ if(done) return; done=true; clearTimeout(to); if(ok&&window.qrcode) res(true); else { s.remove(); next(); } };
+        const to=setTimeout(()=>fin(false),3500);
+        s.onload=()=>fin(true); s.onerror=()=>fin(false); document.head.appendChild(s); };
+      next();
+    });
+    return qrLoading;
+  }
+  window.renderQR = async function(el,text){
+    el.innerHTML='<div class="qr-fallback">二维码生成中…</div>';
+    const ok = await loadQR();
+    if(ok){
+      try{
+        const qr=qrcode(0,"M"); qr.addData(text); qr.make();
+        const n=qr.getModuleCount(); let d="";
+        for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(qr.isDark(r,c)) d+=`M${c} ${r}h1v1h-1z`;
+        el.innerHTML=`<svg viewBox="-1 -1 ${n+2} ${n+2}" shape-rendering="crispEdges"><path d="${d}" fill="#0B0C0A"/></svg>`;
+        return;
+      }catch(e){}
+    }
+    const img=new Image(); img.alt="QR";
+    img.onerror=()=>{ el.innerHTML='<div class="qr-fallback">二维码加载失败<br>请使用右侧网址</div>'; };
+    img.src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=0&data="+encodeURIComponent(text);
+    el.innerHTML=""; el.appendChild(img);
+  };
+})();
+</script>
+<script>
+/* =====================================================================
+   DATA · 时间线 / 讲稿
+   ===================================================================== */
+window.TL_DATA = [
+  {y:"1866",k:"know",n:"孟德尔\n豌豆杂交",h:"孟德尔发表《植物杂交实验》",
+   p:["他在修道院花园里做了约 8 年豌豆杂交，提出遗传“因子”与分离、自由组合规律。论文发表在布隆自然科学学会会刊上，此后 34 年几乎无人问津。",
+      "插曲：植物学权威耐格里建议他改用山柳菊重复实验——而山柳菊多为无融合生殖，结果与豌豆完全对不上，连孟德尔自己也动摇了。"],s:"Mendel 1866；Mendel–Nägeli 通信"},
+  {y:"1900",k:"know",n:"孟德尔定律\n被重新发现",h:"三人同时“重新发现”孟德尔",
+   p:["德弗里斯、科伦斯、切尔马克几乎同时独立得出相同结论，并追认孟德尔的优先权。遗传学由此诞生。","一项认识，等了 34 年，才等到它的时代——认识的发展受制于实践与时代条件。"],s:"Sturtevant, A History of Genetics"},
+  {y:"1910",k:"know",n:"摩尔根\n白眼果蝇",h:"怀疑者的果蝇",
+   p:["一位孟德尔理论的怀疑者，在果蝇中发现伴性遗传，证明基因位于染色体上。","（详见下一页，可以亲手做一次摩尔根的杂交实验。）"],s:"Morgan, Science 1910"},
+  {y:"1928",k:"know",n:"格里菲斯\n转化因子",h:"格里菲斯：神秘的“转化因子”",
+   p:["把加热杀死的有毒肺炎链球菌与无毒活菌一起注入小鼠，小鼠竟然死亡——死菌中的某种物质“转化”了活菌。","遗传信息可以在细胞之间传递，但它是什么？"],s:"Griffith, J Hyg 1928"},
+  {y:"1944",k:"know",n:"艾弗里\n是 DNA",h:"艾弗里：转化因子是 DNA",
+   p:["艾弗里、麦克劳德、麦卡蒂逐一去除蛋白质、RNA 等成分，发现只有破坏 DNA 才能阻止转化。","但当时许多人仍相信遗传物质应是“更复杂”的蛋白质——新认识往往要突破旧观念的惯性。"],s:"Avery et al., J Exp Med 1944"},
+  {y:"1952",k:"know",n:"赫尔希–蔡斯\n噬菌体",h:"赫尔希–蔡斯：噬菌体实验",
+   p:["用放射性 ³²P 标记 DNA、³⁵S 标记蛋白质，发现进入细菌的主要是 DNA。","“DNA 是遗传物质”由此被广泛接受。"],s:"Hershey & Chase, J Gen Physiol 1952"},
+  {y:"1953",k:"know",n:"DNA\n双螺旋",h:"DNA 双螺旋结构",
+   p:["沃森与克里克提出双螺旋模型；罗莎琳德·富兰克林的 X 射线衍射数据（著名的“照片 51”）是关键证据。","她于 1958 年去世；1962 年的诺贝尔奖因不追授而未能授予她——科学认识的“社会性”，也包括它的不公。"],s:"Watson & Crick; Franklin & Gosling, Nature 1953"},
+  {y:"1973",k:"make",n:"重组 DNA\n基因工程",h:"重组 DNA：人类第一次“动手”",
+   p:["科恩与博耶把不同来源的 DNA 拼接起来，并在大肠杆菌中复制——基因工程诞生。","1975 年阿西洛马会议上，科学家主动暂停部分实验、制定安全准则：人类第一次为自己的技术“踩刹车”。"],s:"Cohen et al., PNAS 1973；Berg et al., PNAS 1975"},
+  {y:"1987",k:"know",n:"石野良纯\n奇怪的重复",h:"一段“意义未知”的重复序列",
+   p:["日本大阪大学团队在大肠杆菌基因组中发现一段奇特的重复序列，论文中写道其生物学意义未知。","二十多年后，它有了名字：CRISPR。"],s:"Ishino et al., J Bacteriol 1987"},
+  {y:"2012",k:"make",n:"可编程的\nCas9 剪刀",h:"可编程的“基因剪刀”",
+   p:["卡彭蒂耶与杜德纳证明：设计一条向导 RNA，就能让 Cas9 在指定位置切割 DNA。","2013 年，张锋、丘奇等团队实现了在人类细胞中编辑——“改写生命”从此变得简单、便宜、人人可及。"],s:"Jinek et al., Science 2012；Cong et al., Science 2013"},
+  {y:"2016",k:"make",n:"碱基编辑\n不剪也能改",h:"碱基编辑：不剪断也能改",
+   p:["刘如谦（David Liu）团队开发碱基编辑器，无需切断 DNA 双链，就能把一个碱基改写成另一个。","2019 年，又推出可“搜索并替换”的先导编辑。"],s:"Komor et al., Nature 2016"},
+  {y:"2023",k:"make",n:"首个 CRISPR\n药物获批",h:"首个 CRISPR 药物获批",
+   p:["2023 年 11 月英国、12 月美国批准 Casgevy 治疗镰状细胞病。","从发现细菌里“意义未知”的重复序列，到治愈病人，用了 36 年。"],s:"FDA 2023-12-08"}
+];
+
+/* 详细版讲稿（约 12 分钟，时间充裕时使用）；默认使用下方 window.NOTES 精简版（约 9.5 分钟） */
+window.NOTES_FULL = {
+  cover:{t:15,s:"各位老师、同学好。我汇报的题目是《编辑生命：人类从认识自然到改造自然的辩证之路》。背景这条双螺旋，鼠标划过时碱基会被“改写”——这正是今天的主题：人类花了一百五十年读懂生命之书，最近十几年，开始动手修改它。"},
+  poll1:{t:40,s:"开始之前先做个小调查，请大家扫码：你有没有对基因进行过分子水平的操作？比如 PCR、酶切连接、转化，或者 CRISPR。【等待约 20 秒，看结果】可以看到，已经有不少同学亲手“动过” DNA 了——一百年前，这还是科幻。那我们是怎么走到今天的？从头讲起。",x:"如果“做过”比例高：“在座很多人其实已经是‘编辑者’了。”如果比例低：“其实高中生物实验里的转化就算。”"},
+  acts:{t:10,s:"汇报分三幕：认识——人如何读懂生命；传播——科学走进社会时发生了什么；边界——当编辑的对象变成人自己。"},
+  timeline:{t:35,s:"先看这条时间线：蓝色是“认识自然”，绿色是“改造自然”。1866 年孟德尔发表豌豆实验，被冷落了 34 年；此后人们证明 DNA 是遗传物质、看清了双螺旋；1973 年起人类开始动手拼接 DNA；2012 年 CRISPR 让“改写”变得简单。请注意颜色的转折——这正是从认识自然到改造自然的历史。",x:"可点开 1866：耐格里建议孟德尔改用山柳菊，而山柳菊多为无融合生殖，实验结果对不上；可点开 1953：富兰克林的“照片 51”。"},
+  morgan:{t:50,s:"这里面我最喜欢摩尔根的故事。1910 年前后，他其实是孟德尔理论的怀疑者，学生说他那时“完全可以被称为反孟德尔派”。但他没有停在争论里，而是用果蝇亲自检验。【点击①】红眼雌蝇和白眼雄蝇杂交，F1 全是红眼；【点击②】F1 互交，F2 里红白约 3 比 1，正是孟德尔比例——但白眼全是雄蝇。摩尔根当年的真实计数是 2459、1011、782。由此他得出：基因在 X 染色体上。一个怀疑者，最终成了孟德尔遗传学最有力的证明者，并在 1933 年获得诺贝尔奖。",x:"白眼雄蝇比例略低于理论值，通常被解释为白眼果蝇存活率较低——真实数据从不完美。"},
+  crispr:{t:40,s:"再看 CRISPR。它不是人发明的，而是细菌的免疫记忆。1987 年日本学者发现它时，只写了一句“生物学意义未知”；2007 年证实其功能的，竟是一家酸奶公司。【逐步点击】细菌把病毒片段存进档案；向导 RNA 带着 Cas9 搜索 PAM；配对；剪切；细胞修复时，我们就完成了改写。改一条向导 RNA，就换一个目标——这就是“可编程”。"},
+  credit:{t:45,s:"那 CRISPR 是谁发明的？答案取决于你问谁。【切换】诺贝尔委员会问“谁最先揭示原理”——2020 年化学奖授予卡彭蒂耶和杜德纳。【切换】专利法问“谁最先构思并实现可用的发明”——张锋团队率先在人类细胞中实现编辑，专利之争打了十多年，2025 年美国联邦巡回上诉法院又将案件发回重审，至今未定。还有一位被遗忘的立陶宛科学家希克什尼斯：他更早投稿，却被直接拒稿。"},
+  episteme:{t:45,s:"回到认识论。第一，实践是检验真理的标准：摩尔根把怀疑交给果蝇，结果推翻了他自己的成见。第二，认识是螺旋上升的：“实践、认识、再实践、再认识”，从“因子”到基因、到 DNA、再到可编程的序列，每一圈都更深一层。第三，认识具有社会性：诺奖和专利的分歧说明，“发现”和“发明”遵循不同的评价逻辑，科学认识要在共同体中被检验和承认。方法论上：怀疑而求证，以模式生物化繁为简，还原分析与系统综合相结合。"},
+  myths:{t:40,s:"第二幕，传播。认识自然之后，我们开始改造它，最先引起公众争议的就是转基因。请看四个常见说法，我们一张张翻开。【逐张点击】吃转基因不会改变人的基因；甘薯本身就是“天然转基因作物”；传统诱变育种早就在随机改变基因，登记品种超过 3500 个；荟萃分析显示，转基因作物让农药少用 37%、产量提高 22%、农民利润提高 68%。"},
+  spectrum:{t:30,s:"把育种放到一条光谱上。【拖动或点击】从驯化、杂交、诱变到转基因、基因编辑，都没有凭空创造出新的生命原理，而是在已有的遗传信息上重组和筛选；越往右，改动越少、越精确，我们也越清楚改了什么。讽刺的是，2018 年欧盟法院裁定：随机的传统诱变豁免监管，精确的基因编辑却要按转基因严格监管。",x:"严谨表述：诱变会产生新的等位突变，转基因是把已有基因跨物种转移；“本质相同”指的是它们都在改变作物的遗传组成，区别只在方式与精度。"},
+  golden:{t:45,s:"最典型的是黄金大米。维生素 A 缺乏影响着约 1.9 亿学龄前儿童。2000 年第一代黄金大米问世，2005 年第二代 β-胡萝卜素含量最高提高约 23 倍，百余位诺奖得主公开支持。但二十多年过去，菲律宾 2021 年批准种植，2024 年又被法院叫停。在中国，人们记住的是 2008 年湖南的儿童试验——没有向家长充分告知，论文 2015 年被撤稿。技术安全不等于社会信任，程序正义的失败，会把公众推向对技术本身的怀疑。"},
+  gap:{t:30,s:"看数据：皮尤调查中，88% 的科学家认为转基因食品安全，公众只有 37%，相差 51 个百分点，是所有议题中最大的落差。落差从哪来？BMJ 的一项研究追踪了 462 份大学新闻稿【切换】：新闻稿如实时，新闻夸大的比例只有 10% 到 18%；新闻稿一旦夸大，新闻跟着夸大的比例高达 58% 到 86%。畸变往往从源头就开始了。"},
+  distortion:{t:40,s:"【点击“传下去”】看一句话在传播中如何“突变”——从“小鼠中的相关性”，到最后的“神药”。为什么会这样？风险感知：人们会高估未知、不可控、令人恐惧的风险；“天然即安全”的直觉；“转基因”这个标签本身的框架效应；还有信任与利益——公众关心的不只是概率，还有谁获益、谁承担、能否选择。所以单向“科普灌输”不够，科学进入社会，需要源头准确、坦诚不确定、程序透明、双向对话。"},
+  hjk:{t:35,s:"第三幕，边界。2018 年 11 月，贺建奎宣布一对经 CCR5 编辑的双胞胎出生。他越过了四重边界：没有医疗必要；技术不成熟；伪造伦理审查；而且影响会遗传给后代。2019 年他以非法行医罪被判三年；2021 年，《刑法》新增“非法植入基因编辑、克隆胚胎罪”。"},
+  qiu:{t:45,s:"如果说贺建奎是明显的越界，下面这个案例更值得深思，因为它发生在“治疗”的名义下。据《科学》杂志和“撤稿观察”今年 7 月的联合调查：2025 年 3 月，一名 6 岁女孩接受了全球首例针对大脑的碱基编辑治疗，7 天后因与治疗相关的严重免疫反应去世。家庭自筹了约 86 万美元；试验依据一项无需国家审批的规定开展；团队今年 2 月在《自然》发表的论文对此只字未提。目前学校和期刊都已启动调查，结论尚未公布，我们应以最终调查结果为准。",x:"措辞提示：此案仍在调查中，汇报时请使用“据报道”“专家认为”等表述，避免下定论。"},
+  success:{t:30,s:"但这不是故事的全部。2019 年，维多利亚·格雷接受 CRISPR 治疗，2023 年 Casgevy 成为首个获批的 CRISPR 药物；2025 年，婴儿 KJ 获得了 6 个月内为他一人定制的碱基编辑疗法，已经出院；中国团队的 CS-101 用碱基编辑治疗 β 地贫，成果今年登上《自然》，首批患者摆脱了输血依赖。"},
+  compare:{t:35,s:"把五个案例放在一起【依次点击各列】。成功与失败的差别，不在于用没用基因编辑，而在于每一道闸门：是否有医疗必要、是否只影响本人、证据是否充分、审批是否严格、风险是否如实告知、结果是否公开。“小美”案是体细胞治疗，方向本身没有错，但好几道闸门都出了问题。"},
+  boundary:{t:30,s:"那么边界在哪里？看两条轴：体细胞还是生殖系，治疗还是增强。【点击象限】目前的共识是：体细胞治疗在严格监管下推进；可遗传的生殖系编辑“目前仍不可接受”——这是 2023 年第三届人类基因组编辑国际峰会的原话，在中国更已入刑；而为了“增强”和“完美”的编辑，则远在边界之外。"},
+  dialectic:{t:40,s:"最后回到自然辩证法。恩格斯提醒我们：不要过分陶醉于对自然界的胜利，每一次胜利，自然界都会报复。但他也说，自由在于认识规律，并有计划地让规律为一定目的服务。【拖动滑块】只有敬畏、没有创造，就没有 KJ 和格雷的今天；只有创造、没有敬畏，就会有贺建奎和“小美”的悲剧。敬畏与创造是对立统一的：在认识必然的基础上有边界地创造，才是真正的自由。"},
+  poll2:{t:40,s:"所以最后，我把问题交还给大家：如果给你一个机会，你会为了变得更“完美”选择被编辑吗？请扫码。【等待约 20 秒，结合结果点评】",x:"点评思路：若“只为治病”最多——“大家的直觉与国际共识惊人一致：边界在治疗与增强之间”；若“会”较多——“那谁来定义‘完美’？”；若“不会”最多——“那如果是为了治病呢？”"},
+  finale:{t:20,s:"从孟德尔的豌豆到 CRISPR，认识自然的每一步都在实践中检验；从黄金大米到基因编辑婴儿，改造自然的每一步，也要接受社会与伦理的检验。我们编辑的是生命，被检验的是人类自己。谢谢大家！"},
+  refs:{t:0,s:"（无需讲解，可在问答环节展示，或提示同学扫码查看。）"}
+};
+
+/* 精简版讲稿（默认，约 9.5 分钟，含两次投票等待） */
+window.NOTES = {
+  cover:{t:15,s:"各位老师、同学好，我汇报的题目是《编辑生命》。背景这条双螺旋，鼠标划过时碱基会被“改写”——人类花了一百五十年读懂生命之书，最近十几年，开始动手修改它。"},
+  poll1:{t:40,s:"先做个小调查，请大家扫码：你有没有对基因进行过分子水平的操作？比如 PCR、转化、CRISPR。【等待约 20 秒，看结果】可以看到，不少同学已经亲手“动过” DNA 了——一百年前这还是科幻。我们从头讲起。",x:"若“做过”比例高：“在座很多人其实已经是‘编辑者’了。”若比例低：“其实高中生物的转化实验就算。”"},
+  acts:{t:5,s:"汇报分三幕：认识、传播、边界。"},
+  timeline:{t:27,s:"蓝色是“认识自然”，绿色是“改造自然”。1866 年孟德尔发表豌豆实验，被冷落了 34 年；随后人们证明 DNA 是遗传物质、看清了双螺旋；1973 年开始动手拼接 DNA；2012 年 CRISPR 让改写变得简单。颜色的转折，就是从认识到改造的历史。",x:"可点开 1866：耐格里建议孟德尔改用山柳菊，而山柳菊多为无融合生殖，实验对不上；可点开 1953：富兰克林的“照片 51”。"},
+  morgan:{t:40,s:"我最喜欢摩尔根的故事。1910 年前后，他其实是孟德尔理论的怀疑者，但他没有停在争论里，而是用果蝇亲自检验。【点①】红眼雌蝇配白眼雄蝇，F1 全是红眼；【点②】F1 互交，F2 红白约 3 比 1，正是孟德尔比例——但白眼全是雄蝇。由此他发现：基因在 X 染色体上。一个怀疑者，成了孟德尔最有力的证明者。",x:"摩尔根真实计数：红眼雌 2459、红眼雄 1011、白眼雄 782；白眼略少通常解释为存活率较低。1933 年获诺贝尔奖。"},
+  crispr:{t:32,s:"CRISPR 不是人发明的，而是细菌的免疫记忆。1987 年发现它时，论文只写了“意义未知”；证实其功能的，竟是一家酸奶公司。【逐步点击】记住病毒、搜索、配对、剪切、改写——换一条向导 RNA，就换一个目标，这就是“可编程”。"},
+  credit:{t:33,s:"那 CRISPR 是谁发明的？【切换】诺贝尔委员会问“谁先揭示原理”，2020 年化学奖授予卡彭蒂耶和杜德纳；【切换】专利法问“谁先实现可用的发明”，张锋团队率先在人类细胞中实现编辑，专利之争打了十多年，2025 年又被发回重审，至今未定。还有一位被拒稿的立陶宛科学家希克什尼斯。"},
+  episteme:{t:30,s:"回到认识论。第一，实践是检验真理的标准——摩尔根把怀疑交给了果蝇。第二，认识螺旋上升——“实践、认识、再实践、再认识”，从因子到基因、到 DNA、再到可编程的序列。第三，认识具有社会性——诺奖与专利的分歧说明，发现与发明遵循不同的评价逻辑。"},
+  myths:{t:32,s:"第二幕，传播。改造自然最先引发争议的是转基因。【逐张翻开】吃转基因不会改变人的基因；甘薯本身就是“天然转基因作物”；传统诱变育种早已随机育成 3500 多个品种；荟萃分析显示，转基因作物让农药少用 37%、产量提高 22%。"},
+  spectrum:{t:26,s:"把育种放在一条光谱上。【拖动】从驯化、杂交、诱变到转基因、基因编辑，都是在已有的遗传信息上重组和筛选，越往右改动越少、越精确。讽刺的是，欧盟法院 2018 年裁定：随机诱变豁免监管，精确的基因编辑反而要严格监管。",x:"严谨表述：诱变会产生新的等位突变，转基因是把已有基因跨物种转移；“本质相同”指都在改变作物的遗传组成，区别在方式与精度。"},
+  golden:{t:31,s:"最典型的是黄金大米。全球约 1.9 亿学龄前儿童维生素 A 不足；二代黄金大米 β-胡萝卜素提高约 23 倍，百余位诺奖得主公开支持。但二十多年过去，它在菲律宾获批三年后又被法院叫停。而 2008 年湖南的儿童试验没有充分告知家长，论文被撤稿。技术安全，不等于社会信任。"},
+  gap:{t:26,s:"88% 的科学家认为转基因食品安全，公众只有 37%，相差 51 个百分点。落差从哪来？【切换】BMJ 的研究发现：新闻稿如实时，新闻夸大的比例只有一到两成；新闻稿一旦夸大，新闻跟着夸大的比例高达六到八成。畸变从源头就开始了。"},
+  distortion:{t:30,s:"【点击传下去】一句“小鼠中的相关性”，最后变成了“神药”。为什么？人们会高估未知、不可控的风险；相信“天然即安全”；“转基因”这个标签本身就带着立场；而公众更关心谁获益、谁担风险、能否选择。所以科学进入社会，需要源头准确、坦诚不确定、程序透明、双向对话。"},
+  hjk:{t:23,s:"第三幕，边界。2018 年，贺建奎宣布基因编辑双胞胎出生：没有医疗必要、技术不成熟、伪造伦理审查，而且改动会遗传给后代。他以非法行医罪被判三年；2021 年，《刑法》新增“非法植入基因编辑、克隆胚胎罪”。"},
+  qiu:{t:35,s:"下面这个案例更值得深思，因为它发生在“治疗”的名义下。据《科学》杂志今年 7 月的联合调查：2025 年 3 月，一名 6 岁女孩接受了全球首例针对大脑的碱基编辑治疗，7 天后因严重免疫反应去世。家庭自筹约 86 万美元，试验依据无需国家审批的规定开展，团队在《自然》发表的论文对此只字未提。目前调查仍在进行，应以最终结论为准。",x:"措辞提示：此案仍在调查中，请使用“据报道”“专家认为”等表述，避免下定论。"},
+  success:{t:22,s:"但这不是全部。Casgevy 让镰状细胞病患者格雷重获新生，2023 年成为首个获批的 CRISPR 药物；婴儿 KJ 用 6 个月定制的碱基编辑疗法出院回家；中国的 CS-101 治疗地中海贫血，成果登上了《自然》。"},
+  compare:{t:23,s:"把五个案例并排【点击各列】：成功与失败的差别不在技术，而在每一道闸门——医疗必要、只影响本人、证据充分、严格审批、如实告知、公开透明。“小美”案方向没有错，却在好几道闸门上失守。"},
+  boundary:{t:20,s:"边界在哪里？【点击象限】体细胞治疗，在严格监管下推进；可遗传的生殖系编辑，国际峰会明确“目前仍不可接受”，在中国已经入刑；为了“完美”的增强，更在红线之外。"},
+  dialectic:{t:30,s:"恩格斯提醒我们：不要过分陶醉于对自然界的胜利；他又说：自由在于认识规律，让规律为一定的目的服务。【拖动滑块】只有敬畏，就没有 KJ 和格雷的今天；只有创造，就有贺建奎和“小美”的悲剧。敬畏与创造对立统一——在认识必然的基础上有边界地创造，才是真正的自由。"},
+  poll2:{t:35,s:"最后把问题交给大家：如果给你一个机会，你会为了变得更“完美”选择被编辑吗？请扫码。【等待约 20 秒，结合结果点评】",x:"若“只为治病”最多：“大家的直觉与国际共识一致——边界在治疗与增强之间。”若“会”较多：“那么，谁来定义‘完美’？”若“不会”最多：“那如果是为了治病呢？”"},
+  finale:{t:15,s:"认识自然的每一步，都在实践中检验；改造自然的每一步，也要接受伦理的检验。我们编辑的是生命，被检验的是人类自己。谢谢大家！"},
+  refs:{t:0,s:"（无需讲解，问答环节可停留在此页。）"}
+};
+</script>
+<script>
+/* =====================================================================
+   APP · 模式分发 / 幻灯片引擎 / 各页交互
+   ===================================================================== */
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const QS=new URLSearchParams(location.search);
+const ACC={lime:"#D7F25A",coral:"#FF6A4D",blue:"#7FA8FF",violet:"#C3A6FF"};
+const CH={P:{n:"序章 · PROLOGUE",c:ACC.lime},I:{n:"第一幕 · 认识",c:ACC.lime},II:{n:"第二幕 · 传播",c:ACC.blue},III:{n:"第三幕 · 边界",c:ACC.coral},E:{n:"终章 · CODA",c:ACC.violet}};
+const pad=n=>String(n).padStart(2,"0");
+function rng(seed){ let s=seed>>>0||1; return ()=>{ s^=s<<13; s>>>=0; s^=s>>17; s^=s<<5; s>>>=0; return (s%100000)/100000; }; }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ---------------------------------------------------------------
+   MODE: VOTE (手机投票页)
+   --------------------------------------------------------------- */
+if(QS.has("vote")){
+  document.body.className="mode-vote";
+  $("#app").remove(); $("#notes").remove(); $("#overview").remove();
+  const V=$("#voteApp"); V.hidden=false;
+  const P=PollAPI.POLLS; let q=QS.get("vote"); if(!P[q]) q="q1";
+  const link=k=>{ const u=new URL(location.href); u.searchParams.set("vote",k); return u.pathname+u.search; };
+  const my=PollAPI.myVote(q);
+  const p=P[q];
+  $("#vwrap").innerHTML=`
+    <div class="vbrand"><span><b>编辑生命</b> · 课堂投票</span><span>${q==="q1"?"开场":"结尾"}调查</span></div>
+    <div class="vtabs"><a href="${link("q1")}" class="${q==="q1"?"on":""}">① 开场</a><a href="${link("q2")}" class="${q==="q2"?"on":""}">② 结尾</a></div>
+    <h1 class="vq">${esc(p.title)}</h1>
+    <div class="vhint">${esc(p.hint)}</div>
+    <div class="vopts">${p.options.map((o,i)=>`<button class="vopt" data-id="${o.id}" style="--c:${o.c}"><span class="l">${"ABCD"[i]}</span><span class="t">${esc(o.label)}<small>${esc(o.sub||"")}</small></span><span class="ck">✓</span></button>`).join("")}</div>
+    <div class="vstat" id="vstat">${PollAPI.CLOUD?"":"⚠ 当前为本地演示模式：投票不会同步到大屏（需在网页中配置云端）"}</div>
+    <div class="vres" id="vres" hidden><div class="hint" style="margin-bottom:18px">实时结果</div><div id="vchart"></div></div>
+    <div class="vfoot">匿名投票 · 每台设备每题一票 · 可随时更改<br>自然辩证法课堂展示</div>`;
+  const btns=$$(".vopt",V);
+  const mark=id=>btns.forEach(b=>b.classList.toggle("sel",b.dataset.id===id));
+  let chart=null, unsub=null;
+  const showRes=()=>{ if(chart) return; $("#vres").hidden=false; chart=new PollChart($("#vchart"),q); unsub=PollAPI.subscribe(q,(c,e)=>{ if(c) chart.update(c); }); };
+  if(my){ mark(my); showRes(); $("#vstat").textContent="✓ 你已投票，可点击更改"; $("#vstat").className="vstat ok"; }
+  btns.forEach(b=>b.addEventListener("click",async()=>{
+    const st=$("#vstat"); btns.forEach(x=>x.disabled=true); st.className="vstat"; st.textContent="提交中…";
+    try{ await PollAPI.vote(q,b.dataset.id); mark(b.dataset.id); st.className="vstat ok"; st.textContent="✓ 已提交 · 可随时更改选择"; showRes(); if(navigator.vibrate) navigator.vibrate(18); }
+    catch(e){ st.className="vstat err"; st.textContent="✗ "+e.message+" · 请重试"; }
+    finally{ btns.forEach(x=>x.disabled=false); }
+  }));
+  return;
+}
+
+/* ---------------------------------------------------------------
+   MODE: SCRIPT (打印讲稿)
+   --------------------------------------------------------------- */
+if(QS.has("script")){
+  document.body.className="mode-script"; document.documentElement.style.background="#F3F0E8";
+  const slides=$$("#deck .slide");
+  $("#app").remove(); $("#notes").remove(); $("#overview").remove();
+  const S=$("#scriptApp"); S.hidden=false;
+  const full=QS.get("script")==="full", NT=full?NOTES_FULL:NOTES;
+  const tot=slides.reduce((a,s)=>a+((NT[s.dataset.id]||{}).t||0),0);
+  S.innerHTML=`<button class="pbtn" onclick="print()">打印 / 存为 PDF</button>
+    <h1>《编辑生命》汇报讲稿 · ${full?"详细版":"精简版"}</h1>
+    <div class="meta">人类从认识自然到改造自然的辩证之路 · 共 ${slides.length} 页 · 建议总时长约 ${Math.floor(tot/60)} 分 ${tot%60} 秒（含投票等待）<br>【】内为操作提示；“补充”为可选内容，时间紧张时省略。 · <a href="?script=${full?"1":"full"}">切换到${full?"精简版（约 10 分钟）":"详细版（约 12 分钟）"}</a></div>`+
+    slides.map((s,i)=>{ const n=NT[s.dataset.id]||{}; return `<div class="it"><h3>${pad(i+1)} · ${esc(s.dataset.title)}<span>${n.t?"约 "+n.t+" 秒":""}</span></h3><p>${esc(n.s||"")}</p>${n.x?`<p class="ex">补充：${esc(n.x)}</p>`:""}</div>`; }).join("");
+  return;
+}
+
+/* ---------------------------------------------------------------
+   DECK ENGINE
+   --------------------------------------------------------------- */
+const stage=$("#stage"), slides=$$("#deck .slide"), N=slides.length;
+const IDX={}; slides.forEach((s,i)=>IDX[s.dataset.id]=i);
+const H={}; const on=(id,h)=>{H[id]=h;};
+let cur=-1;
+$("#hudTot").textContent=pad(N);
+{ const pn=window.POLL_CONFIG&&POLL_CONFIG.PRESENTER; if(pn) $("#presenter").textContent=pn; }
+
+function fit(){ const s=Math.min(innerWidth/1600, innerHeight/900); stage.style.setProperty("--s",s); }
+addEventListener("resize",fit); fit();
+
+const prog=$("#progress");
+slides.forEach((s,i)=>{ const d=document.createElement("div"); d.className="seg"; d.dataset.t=pad(i+1)+" "+s.dataset.title; d.onclick=()=>go(i); prog.appendChild(d); });
+const segs=$$(".seg",prog);
+
+function accentOf(s){ const a=s.dataset.accent; return a&&ACC[a]? ACC[a] : (CH[s.dataset.ch]||CH.P).c; }
+
+function go(i){
+  i=Math.max(0,Math.min(N-1,i)); if(i===cur) return;
+  const prev=slides[cur], next=slides[i];
+  if(prev){ prev.classList.remove("active"); const h=H[prev.dataset.id]; if(h&&h.leave) try{h.leave(prev)}catch(e){console.error(e)} }
+  cur=i; next.classList.add("active");
+  stage.style.setProperty("--accent",accentOf(next)); document.documentElement.style.setProperty("--accent",accentOf(next));
+  $("#hudChap").textContent=(CH[next.dataset.ch]||CH.P).n;
+  $("#hudNum").textContent=pad(i+1);
+  segs.forEach((g,k)=>{ g.classList.toggle("done",k<i); g.classList.toggle("cur",k===i); });
+  history.replaceState(null,"","#"+(i+1));
+  const h=H[next.dataset.id]; if(h&&h.enter) try{h.enter(next)}catch(e){console.error(e)}
+  updateNotes();
+}
+const nextS=()=>go(cur+1), prevS=()=>go(cur-1);
+
+/* notes / overview / timer */
+const notes=$("#notes"); let nfs=22;
+function updateNotes(){
+  const s=slides[cur], n=NOTES[s.dataset.id]||{};
+  $("#nNum").textContent=pad(cur+1)+" / "+pad(N);
+  $("#nTitle").textContent=s.dataset.title;
+  $("#nTime").textContent=n.t?("建议 "+n.t+" 秒"):"";
+  $("#nText").innerHTML=esc(n.s||"").replace(/【(.+?)】/g,'<b class="acc" style="color:var(--lime)">【$1】</b>')+(n.x?`<span class="ex">补充：${esc(n.x)}</span>`:"");
+  $("#nNext").textContent=slides[cur+1]? pad(cur+2)+" · "+slides[cur+1].dataset.title : "（最后一页）";
+  $$("#ovList button").forEach((b,k)=>b.classList.toggle("cur",k===cur));
+}
+$("#nSmaller").onclick=()=>{nfs=Math.max(14,nfs-2);notes.style.setProperty("--nfs",nfs+"px")};
+$("#nBigger").onclick=()=>{nfs=Math.min(40,nfs+2);notes.style.setProperty("--nfs",nfs+"px")};
+const ov=$("#overview");
+$("#ovList").innerHTML=slides.map((s,i)=>`<button data-i="${i}" style="--c:${accentOf(s)}"><small>${pad(i+1)} · ${(CH[s.dataset.ch]||CH.P).n}</small><div>${esc(s.dataset.title)}</div></button>`).join("");
+$$("#ovList button").forEach(b=>b.onclick=()=>{ go(+b.dataset.i); ov.classList.remove("open"); });
+let t0=null, tIv=null; const timer=$("#timer");
+function toggleTimer(){
+  if(t0===null){ t0=Date.now(); timer.hidden=false;
+    tIv=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); const txt=pad(Math.floor(s/60))+":"+pad(s%60); timer.textContent=txt; timer.classList.toggle("warn",s>=600); $("#nClock").textContent=txt+(s>=600?"  已超 10 分钟":""); },500);
+  } else { clearInterval(tIv); t0=null; timer.hidden=true; $("#nClock").textContent="计时未开始（按 T）"; }
+}
+function fullscreen(){ const de=document.documentElement; if(!(document.fullscreenElement||document.webkitFullscreenElement)) (de.requestFullscreen||de.webkitRequestFullscreen||(()=>{})).call(de); else (document.exitFullscreen||document.webkitExitFullscreen||(()=>{})).call(document); }
+
+document.addEventListener("keydown",e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  const t=e.target, tag=t.tagName;
+  if(tag==="TEXTAREA"||(tag==="INPUT"&&t.type!=="range")) return;
+  if(tag==="INPUT"&&t.type==="range"&&/Arrow/.test(e.key)) return;
+  if(tag==="BUTTON"&&(e.key===" "||e.key==="Enter")) return;
+  const k=e.key;
+  if(k==="ArrowRight"||k==="PageDown"||k===" "||k==="ArrowDown"){ e.preventDefault(); nextS(); }
+  else if(k==="ArrowLeft"||k==="PageUp"||k==="ArrowUp"){ e.preventDefault(); prevS(); }
+  else if(k==="Home") go(0); else if(k==="End") go(N-1);
+  else if(k==="n"||k==="N") notes.classList.toggle("open");
+  else if(k==="o"||k==="O") ov.classList.toggle("open");
+  else if(k==="f"||k==="F") fullscreen();
+  else if(k==="t"||k==="T") toggleTimer();
+  else if(k==="h"||k==="H") $("#keys").style.opacity=$("#keys").style.opacity==="0"?"1":"0";
+  else if(k==="Escape"){ notes.classList.remove("open"); ov.classList.remove("open"); }
+});
+let tx=null,ty=null;
+stage.addEventListener("touchstart",e=>{ if(e.target.closest("button,input,.flip,.bq,.tl-node,.act,.spec-track,canvas,.refs,.mx")){tx=null;return;} tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+stage.addEventListener("touchend",e=>{ if(tx===null) return; const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)) dx<0?nextS():prevS(); tx=null; });
+$$("[data-goto]").forEach(el=>el.addEventListener("click",()=>go(IDX[el.dataset.goto])));
+$$('input[type=range]').forEach(r=>r.addEventListener("change",()=>r.blur()));
+
+/* ---------------------------------------------------------------
+   HELIX (canvas)
+   --------------------------------------------------------------- */
+const COL={A:[215,242,90],T:[255,106,77],C:[127,168,255],G:[195,166,255]}, COMP={A:"T",T:"A",C:"G",G:"C"};
+const MONO=(getComputedStyle(document.documentElement).getPropertyValue("--mono")||"").trim()||"monospace";
+class Helix{
+  constructor(cv,o){
+    this.cv=cv; this.ctx=cv.getContext("2d");
+    this.o=Object.assign({cy:640,amp:105,x0:120,x1:1480,n:44,twist:.36,speed:.32,interactive:true,alpha:1,onEdit:null},o);
+    const r=rng(7); this.b=Array.from({length:this.o.n},()=>"ATCG"[Math.floor(r()*4)]);
+    this.f=new Float32Array(this.o.n); this.cool=new Float32Array(this.o.n);
+    this.edits=0; this.t=0; this.mx=-1; this.my=-1; this.run=false; this.last=0;
+    this.dpr=Math.min(2,window.devicePixelRatio||1); cv.width=1600*this.dpr; cv.height=900*this.dpr;
+    if(this.o.interactive){
+      cv.addEventListener("pointermove",e=>{ const R=cv.getBoundingClientRect(); this.mx=(e.clientX-R.left)*1600/R.width; this.my=(e.clientY-R.top)*900/R.height; });
+      cv.addEventListener("pointerleave",()=>{this.mx=-1;});
+    }
+  }
+  start(){ if(this.run) return; this.run=true; this.last=performance.now(); const loop=t=>{ if(!this.run) return; const dt=Math.min(.05,(t-this.last)/1000); this.last=t; this.step(dt); this.draw(); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+  stop(){ this.run=false; }
+  step(dt){
+    const o=this.o; this.t+=dt*o.speed;
+    for(let i=0;i<o.n;i++){ if(this.f[i]>0) this.f[i]=Math.max(0,this.f[i]-dt*.9); if(this.cool[i]>0) this.cool[i]-=dt; }
+    if(o.interactive&&this.mx>=0&&this.my>o.cy-o.amp-40&&this.my<o.cy+o.amp+40){
+      const stp=(o.x1-o.x0)/(o.n-1), i=Math.round((this.mx-o.x0)/stp);
+      if(i>=0&&i<o.n&&this.cool[i]<=0){
+        const old=this.b[i]; let nb=old; while(nb===old) nb="ATCG"[Math.floor(Math.random()*4)];
+        this.b[i]=nb; this.f[i]=1; this.cool[i]=.9; this.edits++;
+        o.onEdit&&o.onEdit(this.edits,i+1,old,nb);
+      }
+    }
+  }
+  draw(){
+    const c=this.ctx,o=this.o,d=this.dpr; c.setTransform(d,0,0,d,0,0); c.clearRect(0,0,1600,900);
+    const stp=(o.x1-o.x0)/(o.n-1), A=o.alpha;
+    const edge=x=>Math.max(0,Math.min(1,(x-o.x0+40)/160,(o.x1+40-x)/160));
+    for(const sg of [1,-1]){
+      let px=null,py=0;
+      for(let x=o.x0-40;x<=o.x1+40;x+=6){
+        const th=(x-o.x0)/stp*o.twist+this.t, y=o.cy+sg*o.amp*Math.sin(th), z=(sg*Math.cos(th)+1)/2;
+        if(px!==null){ c.strokeStyle=`rgba(237,232,220,${((.1+.55*z)*A*edge(x)).toFixed(3)})`; c.lineWidth=1+1.8*z; c.beginPath(); c.moveTo(px,py); c.lineTo(x,y); c.stroke(); }
+        px=x; py=y;
+      }
+    }
+    c.textAlign="center"; c.textBaseline="middle";
+    for(let i=0;i<o.n;i++){
+      const x=o.x0+i*stp, th=i*o.twist+this.t, s=Math.sin(th), z=(Math.cos(th)+1)/2;
+      const y1=o.cy+o.amp*s, y2=o.cy-o.amp*s, b=this.b[i], cb=COMP[b], c1=COL[b], c2=COL[cb], f=this.f[i];
+      const a=(.18+.5*Math.abs(s))*A*edge(x);
+      if(f>0){ c.fillStyle=`rgba(215,242,90,${(f*.22*A).toFixed(3)})`; c.beginPath(); c.arc(x,o.cy,14+40*(1-f),0,Math.PI*2); c.fill(); }
+      c.lineWidth=2+3*f;
+      c.strokeStyle=`rgba(${c1},${a.toFixed(3)})`; c.beginPath(); c.moveTo(x,y1); c.lineTo(x,o.cy); c.stroke();
+      c.strokeStyle=`rgba(${c2},${a.toFixed(3)})`; c.beginPath(); c.moveTo(x,o.cy); c.lineTo(x,y2); c.stroke();
+      if(Math.abs(s)>.28){
+        const sz=11+5*z, off=s>0?18:-18;
+        c.font=`${f>0?600:500} ${(sz+f*6).toFixed(1)}px ${MONO}`;
+        c.fillStyle=`rgba(${c1},${Math.min(1,a*1.6+f).toFixed(3)})`; c.fillText(b,x,y1+off);
+        c.fillStyle=`rgba(${c2},${Math.min(1,a*1.6+f).toFixed(3)})`; c.fillText(cb,x,y2-off);
+      }
+    }
+  }
+}
+const hxCover=new Helix($("#helixCover"),{onEdit:(n,pos,a,b)=>{ $("#editLog").innerHTML=`已编辑 <b>${n}</b> 个碱基 · 第 ${pos} 位 ${a}→<b>${b}</b>`; }});
+const hxEnd=new Helix($("#helixEnd"),{cy:470,amp:150,interactive:false,speed:.18,alpha:.9,n:40});
+on("cover",{enter(){hxCover.start()},leave(){hxCover.stop()}});
+on("finale",{enter(){hxEnd.start()},leave(){hxEnd.stop()}});
+
+/* ---------------------------------------------------------------
+   POLL SLIDES
+   --------------------------------------------------------------- */
+const charts={}, subs={};
+function setBadge(state,txt){ $$("[data-badge]").forEach(b=>{ b.className="badge"+(state?" "+state:""); b.querySelector("span").textContent=txt; }); }
+const okText = PollAPI.CLOUD? `云端实时 · 每 ${(PollAPI.CFG.POLL_INTERVAL/1000).toFixed(1).replace(".0","")} 秒同步` : "本地演示模式 · 点击右侧选项可加票";
+setBadge(PollAPI.CLOUD?"":"local", okText);
+["q1","q2"].forEach(q=>{
+  const el=$(`[data-chart="${q}"]`);
+  charts[q]=new PollChart(el,q,{clickable:!PollAPI.CLOUD,onPick:id=>PollAPI.demoAdd(q,id)});
+  const url=PollAPI.voteURL(q);
+  $(`[data-url="${q}"]`).innerHTML=esc(url)+(location.protocol==="file:"?'<br><span style="color:var(--coral)">（本地文件预览：部署到 GitHub Pages 后手机才能扫码访问）</span>':"");
+  const tools=$(`[data-tools="${q}"]`);
+  if(PollAPI.CLOUD){ tools.innerHTML=`<a class="btn" href="${esc(url)}" target="_blank">打开投票页 ↗</a>`; }
+  else{
+    tools.innerHTML=`<button class="btn" data-a="add">＋ 模拟 8 票</button><button class="btn" data-a="reset">清空</button><a class="btn" href="${esc(url)}" target="_blank">投票页 ↗</a>`;
+    tools.querySelector('[data-a="add"]').onclick=()=>{ const ops=PollAPI.POLLS[q].options; for(let i=0;i<8;i++) PollAPI.demoAdd(q,ops[Math.floor(Math.random()*ops.length)].id); };
+    tools.querySelector('[data-a="reset"]').onclick=()=>PollAPI.demoReset(q);
+  }
+  let qrDone=false;
+  on(q==="q1"?"poll1":"poll2",{
+    enter(){
+      if(!qrDone){ qrDone=true; renderQR($(`[data-qr="${q}"]`),url); }
+      subs[q]=PollAPI.subscribe(q,(c,e)=>{
+        const err=$(`[data-err="${q}"]`);
+        if(e){ setBadge("err","连接失败，自动重试中…"); err.textContent=e.message; return; }
+        setBadge(PollAPI.CLOUD?"":"local",okText); err.textContent="";
+        charts[q].update(c);
+      });
+      if(q==="q2") startRecap();
+    },
+    leave(){ subs[q]&&subs[q](); subs[q]=null; if(q==="q2") stopRecap(); }
+  });
+});
+let recapUnsub=null;
+function startRecap(){
+  const P=PollAPI.POLLS.q1, box=$("#recap");
+  box.innerHTML=P.options.map(o=>`<div class="recap-row" style="--c:${o.c}"><span>${o.label}</span><div class="t"><i></i></div><span class="v">0%</span></div>`).join("");
+  recapUnsub=PollAPI.subscribe("q1",c=>{ if(!c) return; const ns=P.options.map(o=>c[o.id]||0), t=ns.reduce((a,b)=>a+b,0);
+    $$(".recap-row",box).forEach((r,i)=>{ const p=t?ns[i]/t*100:0; r.querySelector("i").style.width=p+"%"; r.querySelector(".v").textContent=Math.round(p)+"%"; }); });
+}
+function stopRecap(){ recapUnsub&&recapUnsub(); recapUnsub=null; }
+
+/* ---------------------------------------------------------------
+   TIMELINE
+   --------------------------------------------------------------- */
+(function(){
+  const tl=$("#tl"), det=$("#tlDetail"), D=TL_DATA, n=D.length, W=1300;
+  const kc=k=>k==="make"?ACC.lime:ACC.blue;
+  const line=$(".tl-line",tl);
+  const iMake=D.findIndex(d=>d.k==="make");
+  line.innerHTML=`<i style="left:0;width:${(iMake/(n-1)*100).toFixed(2)}%;background:linear-gradient(90deg,transparent,${ACC.blue})"></i><i style="left:${(iMake/(n-1)*100).toFixed(2)}%;right:0;background:linear-gradient(90deg,${ACC.lime},${ACC.lime})"></i>`;
+  D.forEach((d,i)=>{ const el=document.createElement("div"); el.className="tl-node"; el.style.left=(40+i*W/(n-1))+"px"; el.style.setProperty("--k",kc(d.k));
+    el.innerHTML=`<div class="yr">${d.y}</div><div class="dot"></div><div class="nm">${esc(d.n).replace("\n","<br>")}</div>`; el.onclick=()=>sel(i); tl.appendChild(el); });
+  const nodes=$$(".tl-node",tl);
+  function sel(i){
+    const d=D[i]; nodes.forEach((x,k)=>x.classList.toggle("on",k===i));
+    det.style.setProperty("--k",kc(d.k));
+    det.innerHTML=`<div><div class="big">${d.y}</div><div class="kind"><span class="tag" style="border-color:${kc(d.k)};color:${kc(d.k)}">${d.k==="make"?"改造自然":"认识自然"}</span></div></div><div><h3>${esc(d.h)}</h3>${d.p.map(x=>`<p>${esc(x)}</p>`).join("")}<div class="src">${esc(d.s)}</div></div>`;
+    det.classList.remove("swap"); void det.offsetWidth; det.classList.add("swap");
+  }
+  sel(0);
+  on("timeline",{enter(){sel(0)}});
+})();
+
+/* ---------------------------------------------------------------
+   MORGAN SIMULATOR
+   --------------------------------------------------------------- */
+(function(){
+  const RED="#FF5A3C", WHITE="#F4F1EA";
+  const fly=(eye,big,dl)=>`<svg class="fly${big?" big":""}" viewBox="0 0 24 24" style="animation-delay:${dl||0}ms"><ellipse cx="7.5" cy="13.5" rx="6" ry="3" fill="rgba(237,232,220,.17)" transform="rotate(-28 7.5 13.5)"/><ellipse cx="16.5" cy="13.5" rx="6" ry="3" fill="rgba(237,232,220,.17)" transform="rotate(28 16.5 13.5)"/><ellipse cx="12" cy="15.5" rx="3.1" ry="6" fill="#7a7562"/><circle cx="12" cy="8.2" r="3.3" fill="#5d5a4e"/><circle cx="10.2" cy="7.6" r="2" fill="${eye}"/><circle cx="13.8" cy="7.6" r="2" fill="${eye}"/></svg>`;
+  const F=$("#simF"), M=$("#simM"), gen=$("#simGen"), b1=$("#simB1"), b2=$("#simB2"), b0=$("#simB0");
+  const set=(fs,ms)=>{ F.innerHTML=fs.join(""); M.innerHTML=ms.join(""); $("#simCF").textContent=fs.length; $("#simCM").textContent=ms.length; };
+  function P(){ gen.innerHTML='P 亲代<small>红眼 ♀ X<sup>W</sup>X<sup>W</sup> × 白眼 ♂ X<sup>w</sup>Y（1910 年那只白眼雄蝇）</small>'; set([fly(RED,1)],[fly(WHITE,1)]); b1.disabled=false; b2.disabled=true; ["sm1","sm2","sm3","sm4"].forEach(id=>$("#"+id).textContent="—"); }
+  function F1(){ const fs=[],ms=[]; for(let i=0;i<80;i++){ (Math.random()<.5?fs:ms).push(fly(RED,0,i*9)); }
+    gen.innerHTML='F1 子一代 · 全部红眼<small>♀ X<sup>W</sup>X<sup>w</sup> · ♂ X<sup>W</sup>Y —— 白眼"消失"了（隐性）</small>'; set(fs,ms); b1.disabled=true; b2.disabled=false; }
+  function F2(){ const fs=[],ms=[]; let rf=0,rm=0,wm=0;
+    for(let i=0;i<160;i++){ if(Math.random()<.5){ fs.push(fly(RED,0,i*6)); rf++; } else { const w=Math.random()<.5; ms.push(fly(w?WHITE:RED,0,i*6)); w?wm++:rm++; } }
+    gen.innerHTML='F2 子二代 · 红 : 白 ≈ 3 : 1<small>但白眼<b style="color:var(--accent)">全部是雄蝇</b> → 眼色基因位于 X 染色体</small>'; set(fs,ms);
+    $("#sm1").textContent=rf; $("#sm2").textContent=rm; $("#sm3").textContent=wm; $("#sm4").textContent=0; b2.disabled=true; }
+  b1.onclick=F1; b2.onclick=F2; b0.onclick=P; P();
+  on("morgan",{enter(){P()}});
+})();
+
+/* ---------------------------------------------------------------
+   CRISPR ANIMATION
+   --------------------------------------------------------------- */
+(function(){
+  const svg=$("#crSvg"), TOP="GACTTAGCCATGAAGGTCTACG", X=i=>60+i*34, yT=250, yB=300, yG=372, CUT=10, ED=9;
+  const bot=[...TOP].map(c=>COMP[c]).join("");
+  const base=(i,ch,y,extra)=>`<g class="base ${ch} ${extra||""}" transform="translate(${X(i)},${y-14})"><rect width="28" height="28" rx="5"/><text x="14" y="14">${ch}</text></g>`;
+  const baseEd=(i,o,nw,y)=>`<g class="base ed" transform="translate(${X(i)},${y-14})"><rect width="28" height="28" rx="5"/><text class="old" x="14" y="14" style="fill:${`rgb(${COL[o]})`}">${o}</text><text class="new" x="14" y="14" style="fill:var(--lime);font-weight:700">${nw}</text></g>`;
+  let L="",R="";
+  for(let i=0;i<TOP.length;i++){
+    const tgt=(i>=3&&i<=12)?"tgt":"", pam=(i>=13&&i<=15)?"pam":"";
+    let s;
+    if(i===ED) s=baseEd(i,TOP[i],"G",yT)+baseEd(i,bot[i],"C",yB);
+    else s=base(i,TOP[i],yT,pam)+base(i,bot[i],yB,tgt);
+    if(i<CUT) L+=s; else R+=s;
+  }
+  const bbL=`<line class="bb" x1="40" y1="${yT-20}" x2="${X(CUT)-6}" y2="${yT-20}"/><line class="bb" x1="40" y1="${yB+20}" x2="${X(CUT)-6}" y2="${yB+20}"/>`;
+  const bbR=`<line class="bb" x1="${X(CUT)-6}" y1="${yT-20}" x2="${X(21)+48}" y2="${yT-20}"/><line class="bb" x1="${X(CUT)-6}" y1="${yB+20}" x2="${X(21)+48}" y2="${yB+20}"/>`;
+  let g="",pr="";
+  for(let i=3;i<=12;i++){ const ch=TOP[i]==="T"?"U":TOP[i]; g+=`<g transform="translate(${X(i)+2},${yG-12})"><rect width="24" height="24" rx="12"/><text x="12" y="12">${ch}</text></g>`; pr+=`<line x1="${X(i)+14}" y1="${yB+14}" x2="${X(i)+14}" y2="${yG-12}"/>`; }
+  const xe=X(12)+28, cutX=X(CUT)-3;
+  const arr=[["r",60],["s",90,"#7FA8FF"],["r",156],["s",186,"#C3A6FF"],["r",252]].map(a=>a[0]==="r"?`<rect x="${a[1]}" y="48" width="24" height="26" rx="4" fill="rgba(237,232,220,.22)"/>`:`<rect x="${a[1]}" y="48" width="60" height="26" rx="4" fill="${a[2]}" opacity=".75"/>`).join("");
+  svg.innerHTML=`
+    <text class="lbl" x="60" y="26" style="text-anchor:start">CRISPR 档案 · 重复序列 + 间隔序列（细菌基因组）</text>
+    ${arr}<g class="nsp"><rect x="282" y="48" width="60" height="26" rx="4" fill="var(--lime)"/><text x="312" y="61" style="fill:#0B0C0A;font-size:11px;font-weight:700">新记忆</text></g>
+    <rect x="348" y="48" width="24" height="26" rx="4" fill="rgba(237,232,220,.22)"/>
+    <g class="virus" transform="translate(760,64)"><polygon points="0,-26 22,-13 22,13 0,26 -22,13 -22,-13" fill="none" stroke="var(--coral)" stroke-width="2"/><line x1="0" y1="26" x2="0" y2="52" stroke="var(--coral)" stroke-width="2"/><path d="M-12 52 L0 46 L12 52" fill="none" stroke="var(--coral)" stroke-width="2"/><text class="lbl" x="0" y="0" style="fill:var(--coral)">噬菌体</text></g>
+    <text class="lbl" x="40" y="${yT-38}" style="text-anchor:start">目标 DNA（双链）</text>
+    <g class="pambr"><line x1="${X(13)}" y1="${yT-26}" x2="${X(15)+28}" y2="${yT-26}" stroke="var(--violet)" stroke-width="2"/><text x="${(X(13)+X(15)+28)/2}" y="${yT-40}" style="fill:var(--violet);font-size:12px">PAM · NGG</text></g>
+    <g class="dl">${bbL}${L}</g><g class="dr">${bbR}${R}</g>
+    <g class="cut"><line x1="${cutX}" y1="${yT-30}" x2="${cutX}" y2="${yB+30}" stroke="var(--coral)" stroke-width="2.5" stroke-dasharray="5 4"/><text x="${cutX}" y="${yT-48}" style="fill:var(--coral);font-size:22px">✂</text></g>
+    <g class="cas">
+      <rect class="body" x="114" y="200" width="560" height="236" rx="90"/>
+      <text x="640" y="418" style="fill:var(--lime);font-size:14px;font-weight:700;text-anchor:end">Cas9</text>
+      <g class="pairs">${pr}</g>
+      <g class="grna">${g}</g>
+      <path class="tail" d="M${xe} ${yG} C ${xe+40} ${yG} ${xe+60} ${yG+20} ${xe+50} ${yG+38} C ${xe+40} ${yG+56} ${xe+80} ${yG+60} ${xe+100} ${yG+44}"/>
+      <text class="lbl" x="${X(3)}" y="${yG+30}" style="text-anchor:start;fill:var(--lime)">向导 RNA（约 20 个碱基，可自由设计）</text>
+    </g>
+    <g class="ko"><text x="${X(ED)+14}" y="${yB+60}" style="fill:var(--lime);font-size:13px">▲ A·T → G·C 已改写</text></g>`;
+  const CAP=["点击「下一步」，看 CRISPR 如何工作。",
+    "<b>① 记住</b>病毒入侵后，细菌剪下一小段病毒 DNA，存进自己基因组的 CRISPR「档案」。",
+    "<b>② 搜索</b>档案转录成向导 RNA，与 Cas9 结合；Cas9 沿 DNA 扫描，先寻找 PAM 序列（如 NGG）。",
+    "<b>③ 配对</b>在 PAM 旁，向导 RNA 与目标 DNA 约 20 个碱基互补配对——改向导 RNA，就改了目标。",
+    "<b>④ 剪切</b>配对成功，Cas9 在 PAM 上游约 3 个碱基处切断 DNA 双链。",
+    "<b>⑤ 改写</b>细胞修复断口：可让基因失活（敲除）；若提供模板，也能写入新序列——编辑完成。"];
+  let st=0; const lis=$$("#crSteps li"), nb=$("#crNext"), pb=$("#crPrev");
+  function show(k){ st=Math.max(0,Math.min(5,k)); svg.setAttribute("class","cr-svg cr"+Array.from({length:st},(_,i)=>" ge"+(i+1)).join(""));
+    $("#crCap").innerHTML=CAP[st]; lis.forEach(l=>l.classList.toggle("on",+l.dataset.s===st)); nb.textContent=st===5?"重新播放 ↺":"下一步 →"; pb.disabled=st===0; }
+  nb.onclick=()=>show(st===5?0:st+1); pb.onclick=()=>show(st-1); lis.forEach(l=>l.onclick=()=>show(+l.dataset.s));
+  show(0); on("crispr",{enter(){show(0)}});
+})();
+
+/* ---------------------------------------------------------------
+   TOGGLE helper
+   --------------------------------------------------------------- */
+function toggle(el,cb){
+  const btns=$$("button",el), knob=$(".knob",el);
+  const set=b=>{ btns.forEach(x=>x.classList.toggle("on",x===b)); knob.style.left=b.offsetLeft+"px"; knob.style.width=b.offsetWidth+"px"; cb(b.dataset.v); };
+  btns.forEach(b=>b.onclick=()=>set(b));
+  return { set:v=>set(btns.find(b=>b.dataset.v===v)||btns[0]) };
+}
+
+/* ---------------------------------------------------------------
+   CREDIT
+   --------------------------------------------------------------- */
+(function(){
+  const tg=toggle($("#cvToggle"),v=>$$(".cv-p").forEach(p=>p.classList.toggle("on",p.dataset.p===v)));
+  const C={paper:ACC.blue,pat:"#F2C94C",award:ACC.lime};
+  const E=[["2012.05","加州大学方提交专利申请","pat"],["2012.06","Jinek 等发表于《科学》","paper",1],["2012.09","希克什尼斯发表于 PNAS","paper"],["2012.12","博德研究所提交申请","pat"],["2013.01","张锋、丘奇团队：人类细胞编辑","paper"],["2014.04","博德获美国首个 CRISPR 专利","pat",1],["2018","卡弗里奖：三人共享","award"],["2020.10","诺贝尔化学奖","award",1],["2022.02","专利委员会：真核优先权归博德","pat"],["2025.05","联邦巡回法院：部分撤销、发回","pat",1]];
+  $("#ptl").innerHTML=E.map((e,i)=>`<div class="e${e[3]?" hl":""}" style="left:${60+i*140}px;--c:${C[e[2]]}"><b>${e[0]}</b><i></i>${e[1]}</div>`).join("").replace(/<b>(.*?)<\/b><i><\/i>/g,'<i></i><b>$1</b>');
+  on("credit",{enter(){ requestAnimationFrame(()=>tg.set("nobel")); }});
+})();
+
+/* ---------------------------------------------------------------
+   EPISTEME SPIRAL
+   --------------------------------------------------------------- */
+(function(){
+  const svg=$("#spiral"), cx=320, cy=335, a=14, b=12.5, tmax=6.5*Math.PI;
+  let d=""; for(let t=0;t<=tmax;t+=.04){ const r=a+b*t, x=cx+r*Math.cos(t), y=cy+r*Math.sin(t); d+=(d?"L":"M")+x.toFixed(1)+" "+y.toFixed(1); }
+  const P=[["know","认识 · 1866","遗传“因子”假说"],["prac","实践 · 1910","果蝇杂交：基因在染色体上"],["know","认识 · 1944–1953","DNA 是遗传物质 · 双螺旋"],["prac","实践 · 1973","重组 DNA：动手改造"],["know","认识 · 2012","读懂细菌免疫 → 可编程 Cas9"],["prac","实践 · 2023—","临床治疗：再实践、再检验"]];
+  const pts=P.map((p,i)=>{ const t=(1.5+i)*Math.PI, r=a+b*t, x=cx+r*Math.cos(t), y=cy+r*Math.sin(t), up=Math.sin(t)<0;
+    const ty=up? y-42 : y+30;
+    return `<g class="pt ${p[0]}" style="animation-delay:${(.5+i*.3).toFixed(2)}s"><circle class="h" cx="${x}" cy="${y}" r="13"/><circle class="c" cx="${x}" cy="${y}" r="6"/><text class="k" x="${x}" y="${ty}" text-anchor="middle" fill="currentColor">${p[1]}</text><text x="${x}" y="${ty+19}" text-anchor="middle">${p[2]}</text></g>`; }).join("");
+  svg.innerHTML=`<path class="sp" d="${d}"/>${pts}<text class="ctr" x="${cx}" y="${cy+6}">观察</text><text x="${cx+225}" y="${cy+300}" style="font-family:var(--mono);font-size:11px;fill:var(--mute);letter-spacing:.12em" text-anchor="middle">…循环往复，以至无穷</text>`;
+  const sp=$("path.sp",svg); let len=0;
+  on("episteme",{enter(){
+    if(!len){ len=Math.ceil(sp.getTotalLength()||4000); sp.style.strokeDasharray=len; svg.style.setProperty("--len",len); }
+    svg.classList.remove("drawn"); void svg.getBoundingClientRect(); svg.classList.add("drawn");
+  }});
+})();
+
+/* ---------------------------------------------------------------
+   MYTHS
+   --------------------------------------------------------------- */
+(function(){
+  const cards=$$("#myths .flip"); const upd=()=>$("#mythN").textContent=cards.filter(c=>c.classList.contains("on")).length;
+  cards.forEach(c=>c.onclick=()=>{ c.classList.toggle("on"); upd(); });
+  on("myths",{enter(){ cards.forEach(c=>c.classList.remove("on")); upd(); }});
+})();
+
+/* ---------------------------------------------------------------
+   SPECTRUM
+   --------------------------------------------------------------- */
+(function(){
+  const S=[
+    {n:"驯化选择",e:"约 1 万年前起",how:"人类从自然突变中挑选“好用”的个体留种，如从野生大刍草驯化出玉米。",sc:"全基因组中大量未知变异被无意识地积累",kn:"完全不知道改了哪里",ex:"玉米、小麦、水稻的驯化",mode:"rand",p:.16,c:"rgba(237,232,220,.6)"},
+    {n:"杂交育种",e:"19 世纪末起",how:"让两个品种的基因组整体重组，再从后代中筛选。",sc:"成千上万个基因同时重新组合",kn:"大体不知道",ex:"三系杂交水稻（1973 年配套成功）",mode:"hyb",c:ACC.violet},
+    {n:"诱变育种",e:"20 世纪 20 年代起",how:"用辐射、化学诱变剂乃至太空环境随机制造突变，再筛选。",sc:"随机产生大量新的突变",kn:"不知道具体改了哪里",ex:"全球已登记 3502 个诱变品种；我国的航天育种",mode:"rand",p:.28,c:ACC.coral},
+    {n:"转基因",e:"1994 年首个产品上市",how:"把一个或几个功能已知的基因（可来自其他物种）导入作物。",sc:"插入 1～数个已知基因",kn:"清楚知道插入了什么",ex:"Bt 抗虫棉；拯救夏威夷木瓜产业的抗病毒木瓜（1998）",mode:"ins",c:ACC.blue},
+    {n:"基因编辑",e:"2012 年起",how:"在指定位置修改少数碱基，可以不含任何外源 DNA。",sc:"定点改变一个或几个碱基",kn:"精确到碱基",ex:"日本 2021 年上市的高 GABA 番茄（首个 CRISPR 编辑食品）",mode:"one",c:ACC.lime}];
+  const tr=$("#specTrack"), bar=$("#genomeBar"), info=$("#specInfo"), NT=96, X=i=>100+i*295;
+  $(".rail",tr).style.cssText="left:100px;right:100px";
+  S.forEach((s,i)=>{ const el=document.createElement("div"); el.className="spec-stop"; el.style.left=X(i)+"px"; el.innerHTML=`<i></i><span>${s.n}</span>`; el.onclick=()=>sel(i); tr.appendChild(el); });
+  bar.innerHTML="<i></i>".repeat(NT); const ticks=$$("i",bar), stops=$$(".spec-stop",tr);
+  let cur=-1;
+  function sel(i){
+    if(i===cur) return; cur=i; const s=S[i], r=rng(31+i*17);
+    stops.forEach((x,k)=>x.classList.toggle("on",k===i));
+    bar.style.setProperty("--c",s.c);
+    ticks.forEach((t,k)=>{ t.className="";
+      if(s.mode==="rand"){ if(r()<s.p) t.className="m"; }
+      else if(s.mode==="hyb"){ t.className=(Math.floor(k/ (3+Math.floor(r()*0)) )+Math.floor(r()*1.6))%2?"p2":"p1"; }
+      else if(s.mode==="ins"){ if(k===57||k===58) t.className="m"; }
+      else if(s.mode==="one"){ if(k===38) t.className="m"; } });
+    $("#genomeLab").textContent=s.sc;
+    info.innerHTML=`<div class="swap"><div class="nm" style="color:${s.c}">${s.n}</div><div class="era">${s.e}</div></div>
+      <div class="swap"><div class="k">怎么改</div><div class="v">${s.how}</div></div>
+      <div class="swap"><div class="k">是否知道改了哪里</div><div class="v" style="font-family:var(--serif);font-size:24px;color:${s.c}">${s.kn}</div></div>
+      <div class="swap"><div class="k">例子</div><div class="v">${s.ex}</div></div>`;
+  }
+  let drag=false;
+  const pick=e=>{ const R=tr.getBoundingClientRect(), x=(e.clientX-R.left)*1380/R.width; let b=0,bd=1e9; S.forEach((_,i)=>{ const dd=Math.abs(X(i)-x); if(dd<bd){bd=dd;b=i;} }); sel(b); };
+  tr.addEventListener("pointerdown",e=>{ drag=true; tr.setPointerCapture&&tr.setPointerCapture(e.pointerId); pick(e); });
+  tr.addEventListener("pointermove",e=>{ if(drag) pick(e); });
+  tr.addEventListener("pointerup",()=>drag=false); tr.addEventListener("pointercancel",()=>drag=false);
+  sel(0); on("spectrum",{enter(){ cur=-1; sel(0); }});
+})();
+
+/* ---------------------------------------------------------------
+   GOLDEN RICE TIMELINE
+   --------------------------------------------------------------- */
+(function(){
+  const box=$("#grTl"), ax=$("#grAxis"), x=y=>20+(y-2000)*31.2, Hs=[0,30,95,165];
+  for(let y=2000;y<=2025;y+=5) ax.innerHTML+=`<span style="left:${x(y)}px">${y}</span>`;
+  const UP=[[2000,"第一代黄金大米","Ye 等发表于《科学》",1],[2005,"黄金大米 2 号","β-胡萝卜素最高 ↑23×",2],[2016,"百余位诺奖得主","联名公开信表示支持",2],[2018,"美、加、澳新","完成食品安全评估",1],[2021,"菲律宾批准","全球首个商业种植许可",3]];
+  const DN=[[2008,"湖南衡南儿童试验","未向家长说明使用转基因大米",1],[2012,"论文发表 · 舆论哗然","3 名当地相关人员被免职",2],[2013,"菲律宾试验田","被抗议者破坏",3],[2015,"论文被撤稿","伦理审查与知情同意无法证实",1],[2024,"上诉法院叫停","撤销商业种植许可",2,1]];
+  const mk=(e,cls,c)=>`<div class="gr-e ${cls}${e[4]?" r":""}" style="left:${x(e[0])}px;--h:${Hs[e[3]]}px;--c:${c}"><b>${e[0]} · ${e[1]}</b>${e[2]}</div>`;
+  box.insertAdjacentHTML("beforeend",UP.map(e=>mk(e,"up",ACC.lime)).join("")+DN.map(e=>mk(e,"dn",ACC.coral)).join(""));
+})();
+
+/* ---------------------------------------------------------------
+   GAP (Pew + Sumner)
+   --------------------------------------------------------------- */
+(function(){
+  const pew=$("#pew"), bars=$$(".bar",pew), gm=$(".gapmark",pew), sm=$("#sumner");
+  const H=3.6;
+  gm.style.cssText=`left:170px;width:260px;top:${430-88*H}px;height:${(88-37)*H}px`;
+  const tg=toggle($("#smToggle"),v=>{ sm.classList.toggle("ex",v==="1"); $$(".sm-r i",sm).forEach(i=>{ const val=v==="1"?+i.dataset.b:+i.dataset.a; i.style.width=val+"%"; i.nextElementSibling.textContent=val+"%"; }); });
+  on("gap",{enter(){ pew.classList.remove("go"); bars.forEach(b=>b.style.height="0px");
+      setTimeout(()=>{ pew.classList.add("go"); bars.forEach(b=>b.style.height=(+b.dataset.h*H)+"px"); },350);
+      requestAnimationFrame(()=>tg.set("0")); },
+    leave(){ pew.classList.remove("go"); }});
+})();
+
+/* ---------------------------------------------------------------
+   DISTORTION CHAIN
+   --------------------------------------------------------------- */
+(function(){
+  const C=[{k:"论文",s:"在 40 只小鼠中，摄入 X 与肿瘤发生率降低存在统计相关。",m:"原始结论：动物 · 相关 · 有限样本",c:ACC.blue},
+    {k:"新闻稿",s:"研究提示：X 或有助于降低癌症风险。",m:"畸变：动物 → 人；相关 → 可能因果",c:ACC.violet},
+    {k:"媒体报道",s:"科学家发现：X 能预防癌症！",m:"畸变：“可能”变成“确定”，加上权威背书",c:"#F2C94C"},
+    {k:"社交平台",s:"震惊！每天吃 X 远离癌症，医生都不会告诉你",m:"畸变：加入情绪、阴谋论与行为建议",c:"#FF8A4D"},
+    {k:"大众认知",s:"X = 防癌神药",m:"畸变：一切条件被删除，只剩标签",c:ACC.coral}];
+  const ch=$("#chain"), say=$("#chSay"), nb=$("#chNext"); let k=0;
+  ch.innerHTML=C.map((c,i)=>`${i?'<div class="ch-a">→</div>':""}<div class="ch-n" data-i="${i}" style="--c:${c.c}"><small>0${i+1}</small>${c.k}</div>`).join("");
+  const ns=$$(".ch-n",ch);
+  function show(i){ k=i; ns.forEach((n,j)=>{ n.classList.toggle("on",j<=i); n.classList.toggle("cur",j===i); });
+    say.innerHTML=`<span style="color:${C[i].c}">“${C[i].s}”</span><small>${C[i].m} · 示意，据 Sumner 2014 归纳的三类夸大构建</small>`;
+    say.classList.remove("swap"); void say.offsetWidth; say.classList.add("swap");
+    nb.textContent=i===C.length-1?"重来 ↺":"传下去 →"; }
+  nb.onclick=()=>show(k===C.length-1?0:k+1); ns.forEach(n=>n.onclick=()=>show(+n.dataset.i));
+  show(0); on("distortion",{enter(){show(0)}});
+})();
+
+/* ---------------------------------------------------------------
+   COMPARE MATRIX
+   --------------------------------------------------------------- */
+(function(){
+  const COLS=[["医疗必要性","是否针对严重、缺乏替代手段的疾病？"],["只影响本人","是否只编辑体细胞，改动不会遗传给后代？"],["前期证据","动物与临床前证据是否充分，安全信号是否被正视？"],["监管审批","是否经过国家监管部门或正规伦理审查？"],["知情同意","风险是否被如实、充分地告知？"],["公开透明","结果——包括不良结果——是否如实公开？"]];
+  const ROWS=[
+    {n:"贺建奎",y:"2018 · 胚胎 CCR5",bad:1,v:[["n","已有成熟手段阻断传播"],["n","胚胎编辑，可遗传"],["n","嵌合、脱靶未评估"],["n","伪造伦理审查材料"],["n","以“艾滋病疫苗”为名"],["q","绕开同行评议，经媒体发布"]]},
+    {n:"“小美”案",y:"2025 · 脑内碱基编辑",bad:1,v:[["y","严重罕见病，无有效疗法"],["y","体细胞编辑"],["q","专家：动物实验安全信号被忽视"],["q","依据无需国家审批的规定"],["q","专家：风险被淡化"],["n","论文未披露患者死亡"]]},
+    {n:"Casgevy",y:"2019–2023 · 镰状细胞病",v:[["y","严重遗传病"],["y","体外编辑造血干细胞"],["y","多年临床前 + 多中心试验"],["y","FDA、英国 MHRA 批准"],["y","规范临床试验流程"],["y","结果发表于 NEJM"]]},
+    {n:"婴儿 KJ",y:"2025 · 个体化碱基编辑",v:[["y","致死性代谢病"],["y","肝脏体细胞编辑"],["y","平台研究 + 定制脱靶检测"],["y","FDA 单病例申请获批"],["y","规范流程，未见问题报道"],["y","结果发表于 NEJM"]]},
+    {n:"CS-101",y:"2023–2026 · β 地贫",v:[["y","重度输血依赖"],["y","体外编辑自体干细胞"],["y","临床随访中位 23 个月"],["y","经伦理审查；后获 IND 批准"],["y","规范流程，未见问题报道"],["y","结果发表于《自然》"]]}];
+  const SY={y:"✓",n:"✗",q:"△"};
+  const mx=$("#mx");
+  mx.innerHTML=`<thead><tr><th></th>${COLS.map((c,i)=>`<th data-c="${i}"><button>${c[0]}</button></th>`).join("")}</tr></thead><tbody>${ROWS.map(r=>`<tr class="${r.bad?"bad":"good"}"><th><b>${r.n}</b><span>${r.y}</span></th>${r.v.map((v,i)=>`<td data-c="${i}"><span class="sym ${v[0]}">${SY[v[0]]}</span><span class="nt">${v[1]}</span></td>`).join("")}</tr>`).join("")}</tbody>`;
+  let sel=-1;
+  function pick(i){ sel=i; $$("[data-c]",mx).forEach(el=>el.classList.toggle("on",+el.dataset.c===i)); $("#mxQ").innerHTML=i<0?"点击上方任一闸门，查看各案例的情况。":`<span style="color:var(--accent)">${COLS[i][0]}：</span>${COLS[i][1]}`; }
+  $$("thead th[data-c]",mx).forEach(th=>th.querySelector("button").onclick=()=>pick(+th.dataset.c===sel?-1:+th.dataset.c));
+  $$("tbody td",mx).forEach(td=>td.addEventListener("click",()=>pick(+td.dataset.c)));
+  on("compare",{enter(){pick(-1)}});
+})();
+
+/* ---------------------------------------------------------------
+   BOUNDARY MAP
+   --------------------------------------------------------------- */
+(function(){
+  const D=[
+    {c:ACC.lime,t:"体细胞 × 治疗",s:"可以，但须层层把关",p:"改动只影响患者本人。国际上已有获批药物（Casgevy，2023），个体化定制疗法也已出现。前提是：严重疾病、充分证据、监管审批、如实告知、结果公开。",law:[["《民法典》第 1009 条","从事与人体基因、人体胚胎等有关的医学和科研活动，不得危害人体健康，不得违背伦理道德，不得损害公共利益。"],["《涉及人的生命科学和医学研究伦理审查办法》","国家卫生健康委等四部门，2023 年施行"]]},
+    {c:ACC.coral,t:"生殖系 × 治疗 / 预防",s:"现阶段不可接受",p:"改动会遗传给后代，风险由从未同意的未来世代承担；安全性与有效性标准尚未达到，社会讨论也远未完成。",law:[["第三届人类基因组编辑国际峰会声明（2023）","“可遗传的人类基因组编辑在目前仍不可接受。”"],["《刑法》第 336 条之一（2021 年施行）","将基因编辑、克隆的人类胚胎植入人体或者动物体内，情节严重的，处三年以下有期徒刑或者拘役；情节特别严重的，处三年以上七年以下有期徒刑。"]]},
+    {c:ACC.violet,t:"体细胞 × 增强",s:"争议巨大 · 无获批先例",p:"不是治病，而是让健康的人“更强”。谁来定义“更好”？会不会加剧不公平？代价由谁承担？",law:[["世界反兴奋剂机构禁用清单 · M3","“基因与细胞兴奋剂”被明确禁止。"]]},
+    {c:ACC.coral,t:"生殖系 × 增强",s:"红线之外",p:"“设计婴儿”既有不可逆的安全风险，更触及人的尊严、平等与人类遗传多样性——优生学的历史教训近在眼前。",law:[["WHO《人类基因组编辑：治理框架与建议》（2021）","建议建立全球登记与举报机制，防范不负责任的应用。"]]}];
+  const qs=$$("#bmap .bq"), pn=$("#bpanel");
+  function pick(i){ const d=D[i]; qs.forEach((q,k)=>q.classList.toggle("on",k===i)); pn.style.setProperty("--c",d.c);
+    pn.innerHTML=`<div class="ttl">${d.t}</div><div class="status" style="margin-top:8px">${d.s}</div><p>${d.p}</p><div class="law">${d.law.map(l=>`<div>${l[1]}<small>${l[0]}</small></div>`).join("")}</div>`;
+    pn.classList.remove("swap"); void pn.offsetWidth; pn.classList.add("swap"); }
+  qs.forEach(q=>q.onclick=()=>pick(+q.dataset.q)); pick(0); on("boundary",{enter(){pick(0)}});
+})();
+
+/* ---------------------------------------------------------------
+   DIALECTIC SCALE
+   --------------------------------------------------------------- */
+(function(){
+  const svg=$("#scale"), r=$("#dialR"), out=$("#dout"), PX=320, PY=110, L=230;
+  svg.innerHTML=`<path d="M${PX} ${PY} L${PX-60} 310 L${PX+60} 310 Z" fill="rgba(237,232,220,.05)" stroke="rgba(237,232,220,.25)"/>
+    <line x1="${PX-120}" y1="312" x2="${PX+120}" y2="312" stroke="rgba(237,232,220,.25)" stroke-width="2"/>
+    <g id="beam"><line x1="${PX-L}" y1="${PY}" x2="${PX+L}" y2="${PY}" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/></g>
+    <circle cx="${PX}" cy="${PY}" r="9" fill="var(--bg)" stroke="var(--ink)" stroke-width="3"/>
+    <g id="panL"></g><g id="panR"></g>`;
+  const pan=(lab,c)=>`<line x1="0" y1="0" x2="-46" y2="86" stroke="rgba(237,232,220,.4)"/><line x1="0" y1="0" x2="46" y2="86" stroke="rgba(237,232,220,.4)"/><path d="M-62 86 Q0 132 62 86 Z" fill="${c}" fill-opacity=".16" stroke="${c}" stroke-width="2"/><text x="0" y="135" style="fill:${c}">${lab}</text>`;
+  $("#panL",svg).innerHTML=pan("敬畏",ACC.blue); $("#panR",svg).innerHTML=pan("创造",ACC.coral);
+  const Z=[[15,"停滞",ACC.blue,"只有敬畏、没有创造：拒绝一切干预——Casgevy、KJ、CS-101 的患者将失去机会。“因噎废食”同样是对生命的不负责。"],
+    [38,"保守",ACC.blue,"过度谨慎：风险被放大，收益被忽视，患者的需要被一再延宕。"],
+    [61,"负责任的创新",ACC.lime,"在认识规律的基础上有边界地创造：以必要性为前提、以证据为基础、以程序为保障、以透明为底线。"],
+    [84,"冒进","#FF8A4D","收益被夸大、风险被淡化：为抢“全球首例”而压缩安全评估——“小美”案的教训。"],
+    [100,"失控",ACC.coral,"只有创造、没有敬畏：无视规律与伦理，把人当作实验品——贺建奎事件。"]];
+  let ang=0,target=0,raf=null;
+  const beam=$("#beam",svg), pl=$("#panL",svg), pr=$("#panR",svg);
+  function draw(){ const a=ang*Math.PI/180; beam.setAttribute("transform",`rotate(${ang.toFixed(2)} ${PX} ${PY})`);
+    pl.setAttribute("transform",`translate(${(PX-L*Math.cos(a)).toFixed(1)} ${(PY-L*Math.sin(a)).toFixed(1)})`);
+    pr.setAttribute("transform",`translate(${(PX+L*Math.cos(a)).toFixed(1)} ${(PY+L*Math.sin(a)).toFixed(1)})`); }
+  function anim(){ ang+=(target-ang)*.12; draw(); if(Math.abs(target-ang)>.02) raf=requestAnimationFrame(anim); else { ang=target; draw(); raf=null; } }
+  function upd(){ const v=+r.value; target=(v-50)/50*16; if(!raf) raf=requestAnimationFrame(anim);
+    const z=Z.find(z=>v<=z[0]); out.style.setProperty("--c",z[2]); out.innerHTML=`<div class="z">${z[1]}</div><p>${z[3]}</p>`; }
+  r.addEventListener("input",upd); draw(); upd();
+  on("dialectic",{enter(){ r.value=50; upd(); }});
+})();
+
+/* ---------------------------------------------------------------
+   START
+   --------------------------------------------------------------- */
+const h=parseInt((location.hash||"").replace("#",""),10);
+go(window.__START__!=null?window.__START__:(isNaN(h)?0:h-1));
+})();
+</script>
+</body>
+</html>
